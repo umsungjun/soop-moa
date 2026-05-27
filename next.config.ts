@@ -1,0 +1,49 @@
+import type { NextConfig } from "next";
+
+const SOOP_FRAME_SRC = "https://*.sooplive.com https://*.sooplive.co.kr https://*.afreecatv.com";
+const SOOP_IMG_SRC = "https://*.sooplive.com https://*.sooplive.co.kr https://*.afreecatv.com";
+
+// NOTE: script-src/style-src use 'unsafe-inline' for MVP compatibility with
+// Next.js inline runtime. Harden later with a nonce-based CSP if needed.
+const csp = [
+  `default-src 'self'`,
+  `script-src 'self' 'unsafe-inline' 'unsafe-eval'`,
+  `style-src 'self' 'unsafe-inline'`,
+  `img-src 'self' data: blob: ${SOOP_IMG_SRC}`,
+  `media-src 'self' blob: ${SOOP_FRAME_SRC}`,
+  `font-src 'self' data:`,
+  `frame-src 'self' ${SOOP_FRAME_SRC}`,
+  `connect-src 'self' https://*.sooplive.com https://*.sooplive.co.kr`,
+  `object-src 'none'`,
+  `base-uri 'self'`,
+  `frame-ancestors 'self'`,
+].join("; ");
+
+const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "**.sooplive.com" },
+      { protocol: "https", hostname: "**.sooplive.co.kr" },
+      { protocol: "https", hostname: "**.afreecatv.com" },
+    ],
+  },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "Content-Security-Policy", value: csp },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-DNS-Prefetch-Control", value: "on" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+        ],
+      },
+    ];
+  },
+};
+
+export default nextConfig;
