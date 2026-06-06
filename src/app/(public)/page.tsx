@@ -51,7 +51,12 @@ export default function LandingPage() {
         </p>
 
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
-          <Button size="lg" className="gap-1.5" render={<a href="/multiview" />}>
+          <Button
+            size="lg"
+            className="gap-1.5"
+            nativeButton={false}
+            render={<a href="/multiview" />}
+          >
             멀티뷰 시작하기
             <ArrowRight />
           </Button>
@@ -59,6 +64,7 @@ export default function LandingPage() {
             size="lg"
             variant="outline"
             className="gap-1.5"
+            nativeButton={false}
             render={<a href="/live" />}
           >
             <Radio />

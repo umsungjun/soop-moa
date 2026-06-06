@@ -19,6 +19,7 @@ export function LoginButton({
     <Button
       size={size}
       className={cn("gap-1.5", className)}
+      nativeButton={false}
       render={<a href="/api/auth/login" />}
     >
       <LogIn />
