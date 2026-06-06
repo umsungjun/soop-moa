@@ -2,10 +2,9 @@ import { cn } from "@/lib/utils";
 
 interface LogoProps {
   className?: string;
-  withText?: boolean;
 }
 
-/** 4-quad "forest grid" mark — multiview (4 panels) + SOOP (forest greens). */
+/** 4분할 블루 그리드 마크 — 랜딩 페이지의 장식용 모티프로 사용. */
 export function LogoMark({ className }: { className?: string }) {
   return (
     <svg
@@ -15,23 +14,24 @@ export function LogoMark({ className }: { className?: string }) {
       className={cn("size-7", className)}
       aria-hidden="true"
     >
-      <rect x="2" y="2" width="13" height="13" rx="3.5" fill="oklch(0.8 0.17 162)" />
-      <rect x="17" y="2" width="13" height="13" rx="3.5" fill="oklch(0.7 0.15 168)" />
-      <rect x="2" y="17" width="13" height="13" rx="3.5" fill="oklch(0.62 0.13 174)" />
-      <rect x="17" y="17" width="13" height="13" rx="3.5" fill="oklch(0.55 0.11 180)" />
+      <rect x="2" y="2" width="13" height="13" rx="3.5" fill="oklch(0.74 0.14 235)" />
+      <rect x="17" y="2" width="13" height="13" rx="3.5" fill="oklch(0.67 0.15 245)" />
+      <rect x="2" y="17" width="13" height="13" rx="3.5" fill="oklch(0.6 0.15 255)" />
+      <rect x="17" y="17" width="13" height="13" rx="3.5" fill="oklch(0.52 0.14 262)" />
     </svg>
   );
 }
 
-export function Logo({ className, withText = true }: LogoProps) {
+/** 브랜드 워드마크(텍스트 전용) — 헤더에서 사용. */
+export function Logo({ className }: LogoProps) {
   return (
-    <span className={cn("inline-flex items-center gap-2", className)}>
-      <LogoMark />
-      {withText && (
-        <span className="text-base font-bold tracking-tight">
-          SOOP <span className="text-primary">MOA</span>
-        </span>
+    <span
+      className={cn(
+        "text-base font-bold tracking-tight whitespace-nowrap",
+        className,
       )}
+    >
+      SOOP <span className="text-primary">모아</span>
     </span>
   );
 }
