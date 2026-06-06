@@ -2,9 +2,23 @@ import type { Metadata } from "next";
 import { LiveBrowser } from "@/domains/live/components/live-browser";
 
 export const metadata: Metadata = {
-  title: "라이브 방송",
+  title: "SOOP 라이브 방송 목록",
   description:
-    "현재 방송 중인 SOOP 라이브를 카테고리별로 둘러보고 멀티뷰에 추가하세요.",
+    "현재 방송 중인 SOOP 라이브를 카테고리·시청자 수별로 둘러보고 클릭 한 번으로 멀티뷰에 추가하세요. SOOP 실시간 방송 검색·발견 도구.",
+  keywords: [
+    "SOOP 라이브 목록",
+    "SOOP 실시간 방송",
+    "SOOP 카테고리",
+    "BJ 검색",
+    "라이브 방송 둘러보기",
+  ],
+  alternates: { canonical: "/live" },
+  openGraph: {
+    title: "SOOP 라이브 방송 목록 | SOOP 모아",
+    description:
+      "방송 중인 SOOP 라이브를 둘러보고 멀티뷰에 빠르게 추가하세요.",
+    url: "/live",
+  },
 };
 
 export default function LivePage() {
