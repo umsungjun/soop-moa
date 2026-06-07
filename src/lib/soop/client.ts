@@ -125,6 +125,7 @@ function normalizeBroadcast(raw: SoopBroadcast): LiveBroadcast {
     categoryNo: raw.broad_cate_no,
     viewerCount: Number(raw.total_view_cnt ?? 0) || 0,
     thumbnail: withHttps(raw.broad_thumb),
+    profileImage: withHttps(raw.profile_img),
     startedAt: raw.broad_start,
     adult: grade >= 19,
   };

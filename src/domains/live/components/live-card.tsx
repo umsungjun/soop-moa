@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Plus, Radio, Users } from "lucide-react";
+import { Plus, Radio, User, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { LiveBroadcast } from "@/domains/live/types";
 import { cn } from "@/lib/utils";
@@ -61,17 +61,36 @@ export function LiveCard({ broadcast, onSelect, href }: LiveCardProps) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-1 p-3">
-        <h3 className="line-clamp-2 text-sm leading-snug font-semibold text-balance">
-          {broadcast.title}
-        </h3>
-        <div className="text-muted-foreground flex items-center justify-between gap-2 text-xs">
-          <span className="truncate">{broadcast.bjNick}</span>
-          {broadcast.categoryName ? (
-            <span className="bg-muted shrink-0 rounded px-1.5 py-0.5">
-              {broadcast.categoryName}
+      <div className="flex gap-2.5 p-3">
+        {/* BJ 프로필 아바타 */}
+        <span className="ring-border bg-muted relative mt-0.5 size-8 shrink-0 overflow-hidden rounded-full ring-1">
+          {broadcast.profileImage ? (
+            <Image
+              src={broadcast.profileImage}
+              alt={broadcast.bjNick}
+              fill
+              sizes="32px"
+              className="object-cover"
+              unoptimized
+            />
+          ) : (
+            <span className="text-muted-foreground flex size-full items-center justify-center">
+              <User className="size-4" />
             </span>
-          ) : null}
+          )}
+        </span>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <h3 className="line-clamp-2 text-sm leading-snug font-semibold text-balance">
+            {broadcast.title}
+          </h3>
+          <div className="text-muted-foreground flex items-center justify-between gap-2 text-xs">
+            <span className="truncate">{broadcast.bjNick}</span>
+            {broadcast.categoryName ? (
+              <span className="bg-muted shrink-0 rounded px-1.5 py-0.5">
+                {broadcast.categoryName}
+              </span>
+            ) : null}
+          </div>
         </div>
       </div>
     </>

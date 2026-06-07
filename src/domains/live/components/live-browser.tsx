@@ -14,9 +14,15 @@ interface LiveBrowserProps {
   onSelect?: (broadcast: LiveBroadcast) => void;
   /** 스크롤 컨테이너(사이드바·다이얼로그) 안에서 검색·필터를 상단에 고정한다. */
   stickyHeader?: boolean;
+  /** 좁은 곳(사이드바·다이얼로그)에선 모바일에서도 2열로 촘촘하게 표시. */
+  dense?: boolean;
 }
 
-export function LiveBrowser({ onSelect, stickyHeader }: LiveBrowserProps) {
+export function LiveBrowser({
+  onSelect,
+  stickyHeader,
+  dense,
+}: LiveBrowserProps) {
   const [category, setCategory] = useState<string | undefined>();
   const [order, setOrder] = useState<SortType>("view_cnt");
   const [search, setSearch] = useState("");
@@ -103,6 +109,7 @@ export function LiveBrowser({ onSelect, stickyHeader }: LiveBrowserProps) {
         broadcasts={filtered}
         isLoading={isLoading}
         isFetchingNextPage={isFetchingNextPage}
+        dense={dense}
         onSelect={onSelect}
       />
       {/* 무한 스크롤 트리거 — 마지막 카드 아래에 위치 */}
