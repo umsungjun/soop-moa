@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
       userNick: info.user_nick,
       stationName: info.station_name,
       profileImage: info.profile_image,
+      userId: info.user_id,
     };
     await session.save();
   } catch (err) {
