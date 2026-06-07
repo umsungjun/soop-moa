@@ -145,6 +145,12 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
+  /* 네이티브 button/role=button은 기본 cursor가 default라 포인터를 명시한다 (비활성 제외). */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: pointer;
+  }
   /* 시청자 수 등 숫자 정렬을 위한 tabular numerals */
   .tabular-nums {
     font-variant-numeric: tabular-nums;
