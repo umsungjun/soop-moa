@@ -2,10 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import { LayoutGrid, Radio } from "lucide-react";
-import { Logo } from "./logo";
-import { ThemeToggle } from "./theme-toggle";
 import { UserMenu } from "@/domains/auth/components/user-menu";
 import { cn } from "@/lib/utils";
+import { Logo } from "./logo";
+import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
   { href: "/live", label: "라이브", icon: Radio },

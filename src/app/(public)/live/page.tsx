@@ -15,8 +15,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/live" },
   openGraph: {
     title: "SOOP 라이브 방송 목록 | SOOP 모아",
-    description:
-      "방송 중인 SOOP 라이브를 둘러보고 멀티뷰에 빠르게 추가하세요.",
+    description: "방송 중인 SOOP 라이브를 둘러보고 멀티뷰에 빠르게 추가하세요.",
     url: "/live",
   },
 };

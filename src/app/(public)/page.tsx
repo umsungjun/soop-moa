@@ -1,6 +1,6 @@
 import { ArrowRight, LayoutGrid, Radio, Share2, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/layout/logo";
+import { Button } from "@/components/ui/button";
 
 const FEATURES = [
   {
@@ -79,7 +79,10 @@ export default function LandingPage() {
               <div
                 key={i}
                 className="from-primary/15 to-brand-accent/10 ring-border/60 relative animate-pulse overflow-hidden rounded-xl bg-linear-to-br ring-1"
-                style={{ animationDelay: `${i * 0.4}s`, animationDuration: "3s" }}
+                style={{
+                  animationDelay: `${i * 0.4}s`,
+                  animationDuration: "3s",
+                }}
               >
                 <div className="absolute inset-0 flex items-center justify-center opacity-30">
                   <LogoMark className="size-10" />

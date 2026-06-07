@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { siteConfig } from "@/config/site";
 import { getSession } from "@/lib/session/helpers";
-import { requestAccessToken, getStationInfo } from "@/lib/soop/client";
+import { getStationInfo, requestAccessToken } from "@/lib/soop/client";
 
 export const dynamic = "force-dynamic";
 

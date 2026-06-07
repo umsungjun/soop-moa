@@ -2,7 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LS_KEY_STATE, MAX_PANELS } from "../constants";
-import type { LayoutSizes, MultiviewState, Panel, PanelOptions } from "../types";
+import type {
+  LayoutSizes,
+  MultiviewState,
+  Panel,
+  PanelOptions,
+} from "../types";
 import { decodePanels, encodePanels, newPanel } from "../utils/url-codec";
 
 function defaultState(): MultiviewState {
@@ -19,7 +24,8 @@ function loadFromLocalStorage(): MultiviewState | null {
     const raw = localStorage.getItem(LS_KEY_STATE);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as MultiviewState;
-    if (!Array.isArray(parsed.panels) || parsed.panels.length === 0) return null;
+    if (!Array.isArray(parsed.panels) || parsed.panels.length === 0)
+      return null;
     return parsed;
   } catch {
     return null;
@@ -75,21 +81,16 @@ export function useMultiviewState() {
     };
   }, [state]);
 
-  const update = useCallback(
-    (fn: (prev: MultiviewState) => MultiviewState) => {
-      setState((prev) => (prev ? fn(prev) : prev));
-    },
-    [],
-  );
+  const update = useCallback((fn: (prev: MultiviewState) => MultiviewState) => {
+    setState((prev) => (prev ? fn(prev) : prev));
+  }, []);
 
   // ── Actions ──
   const assignToPanel = useCallback(
     (panelId: string, bjId: string) => {
       update((prev) => ({
         ...prev,
-        panels: prev.panels.map((p) =>
-          p.id === panelId ? { ...p, bjId } : p,
-        ),
+        panels: prev.panels.map((p) => (p.id === panelId ? { ...p, bjId } : p)),
         focusedId: panelId,
       }));
     },

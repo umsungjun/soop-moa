@@ -67,7 +67,12 @@ export function MultiviewToolbar({
       </Button>
 
       <div className="ml-auto flex items-center gap-1.5">
-        <Button variant="ghost" size="sm" className="gap-1.5" onClick={handleShare}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1.5"
+          onClick={handleShare}
+        >
           <Link2 />
           <span className="hidden sm:inline">공유</span>
         </Button>

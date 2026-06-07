@@ -1,9 +1,9 @@
 "use client";
 
 import { Plus, Radio } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { MAX_PANELS } from "@/domains/multiview/constants";
 import type { Panel as PanelData } from "@/domains/multiview/types";
+import { cn } from "@/lib/utils";
 
 interface MobileStackProps {
   panels: PanelData[];
@@ -20,8 +20,7 @@ export function MobileStack({
   onAddPanel,
   renderSlot,
 }: MobileStackProps) {
-  const active =
-    panels.find((p) => p.id === activeId) ?? panels[0] ?? null;
+  const active = panels.find((p) => p.id === activeId) ?? panels[0] ?? null;
 
   return (
     <div className="flex h-full flex-col">

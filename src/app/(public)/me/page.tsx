@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Heart, Radio } from "lucide-react";
-import { getSession, getValidAccessToken, isAuthenticated } from "@/lib/session/helpers";
+import {
+  getSession,
+  getValidAccessToken,
+  isAuthenticated,
+} from "@/lib/session/helpers";
 import { getStationInfo } from "@/lib/soop/client";
 import { formatRelativeTime } from "@/utils/format";
 

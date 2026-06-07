@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { MAX_PANELS, DEFAULT_PANEL_OPTIONS } from "../constants";
+import { DEFAULT_PANEL_OPTIONS, MAX_PANELS } from "../constants";
 import type { Panel } from "../types";
 import { isValidBjId } from "./validate-bj-id";
 

@@ -1,15 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useMultiviewState } from "@/domains/multiview/hooks/use-multiview-state";
+import type { Panel as PanelData } from "@/domains/multiview/types";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
-import type { Panel as PanelData } from "@/domains/multiview/types";
-import { useMultiviewState } from "@/domains/multiview/hooks/use-multiview-state";
 import { AddStreamDialog } from "./add-stream/add-stream-dialog";
 import { GridLayout } from "./grid/grid-layout";
 import { MobileStack } from "./grid/mobile-stack";
-import { PanelSlot } from "./panel/panel-slot";
 import { MultiviewToolbar } from "./multiview-toolbar";
+import { PanelSlot } from "./panel/panel-slot";
 
 interface MultiviewViewProps {
   /** Live browser slot injected by the app layer (keeps domains decoupled). */

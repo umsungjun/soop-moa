@@ -8,8 +8,8 @@ import {
   VolumeX,
   X,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import type { PanelOptions } from "@/domains/multiview/types";
+import { cn } from "@/lib/utils";
 
 interface PanelControlBarProps {
   bjId: string;

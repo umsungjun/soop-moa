@@ -26,7 +26,9 @@ export function GridLayout({
   const n = panels.length;
 
   if (n <= 1) {
-    return <div className="size-full">{panels[0] && renderSlot(panels[0])}</div>;
+    return (
+      <div className="size-full">{panels[0] && renderSlot(panels[0])}</div>
+    );
   }
 
   if (n === 2) {
@@ -51,7 +53,11 @@ export function GridLayout({
         </Panel>
         <ResizableSplitter orientation="horizontal" />
         <Panel id="right" minSize={MIN_PANEL_SIZE} className={PANEL_CLS}>
-          <Group orientation="vertical" className="size-full" {...groupHandlers}>
+          <Group
+            orientation="vertical"
+            className="size-full"
+            {...groupHandlers}
+          >
             <Panel id="r0" minSize={MIN_PANEL_SIZE} className={PANEL_CLS}>
               {renderSlot(panels[1])}
             </Panel>

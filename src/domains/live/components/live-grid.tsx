@@ -2,8 +2,8 @@
 
 import { Radio } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { LiveCard } from "./live-card";
 import type { LiveBroadcast } from "@/domains/live/types";
+import { LiveCard } from "./live-card";
 
 interface LiveGridProps {
   broadcasts: LiveBroadcast[];

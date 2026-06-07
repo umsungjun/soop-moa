@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Flame, Clock } from "lucide-react";
+import { Clock, Flame } from "lucide-react";
 import { useLiveList } from "@/domains/live/hooks/use-live-list";
 import type { LiveBroadcast, SortType } from "@/domains/live/types";
 import { cn } from "@/lib/utils";
@@ -50,7 +50,11 @@ export function LiveBrowser({ onSelect }: LiveBrowserProps) {
         </div>
       </div>
 
-      <LiveGrid broadcasts={broadcasts} isLoading={isLoading} onSelect={onSelect} />
+      <LiveGrid
+        broadcasts={broadcasts}
+        isLoading={isLoading}
+        onSelect={onSelect}
+      />
     </div>
   );
 }

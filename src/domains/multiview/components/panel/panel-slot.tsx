@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 import type { Panel } from "@/domains/multiview/types";
+import { cn } from "@/lib/utils";
 import { PanelControlBar } from "./panel-control-bar";
 import { PanelEmptyState } from "./panel-empty-state";
 import { PanelPlayer } from "./panel-player";

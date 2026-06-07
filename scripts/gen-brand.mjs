@@ -7,8 +7,8 @@
 //    어느 경로든 누끼를 고해상도에서 처리하므로 이진 flood-fill 마스크가 축소
 //    과정에서 안티에일리어싱된다(엣지 깔끔, 흰 테두리 없음). 모든 출력은
 //    lanczos3로 리사이즈 + 표시 크기에서 약하게 샤프닝한다.
-import sharp from "sharp";
 import { existsSync } from "node:fs";
+import sharp from "sharp";
 
 const HD = "public/brand/source-hd.png"; // EDSR x4 마스터 (이미 엠블럼만 크롭됨)
 const SRC = "public/brand/source.png";
@@ -30,11 +30,15 @@ async function makeCutout() {
     .ensureAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true });
-  const Wd = info.width, Ht = info.height;
+  const Wd = info.width,
+    Ht = info.height;
   const at = (x, y) => (y * Wd + x) * 4;
   const isBg = (i) => {
-    const r = data[i], g = data[i + 1], b = data[i + 2];
-    const mn = Math.min(r, g, b), mx = Math.max(r, g, b);
+    const r = data[i],
+      g = data[i + 1],
+      b = data[i + 2];
+    const mn = Math.min(r, g, b),
+      mx = Math.max(r, g, b);
     return mn > 200 && mx - mn < 26; // 밝고 채도 낮음
   };
   const visited = new Uint8Array(Wd * Ht);
@@ -47,10 +51,17 @@ async function makeCutout() {
       stack.push(x, y);
     }
   };
-  for (let x = 0; x < Wd; x++) { seed(x, 0); seed(x, Ht - 1); }
-  for (let y = 0; y < Ht; y++) { seed(0, y); seed(Wd - 1, y); }
+  for (let x = 0; x < Wd; x++) {
+    seed(x, 0);
+    seed(x, Ht - 1);
+  }
+  for (let y = 0; y < Ht; y++) {
+    seed(0, y);
+    seed(Wd - 1, y);
+  }
   while (stack.length) {
-    const y = stack.pop(), x = stack.pop();
+    const y = stack.pop(),
+      x = stack.pop();
     if (x > 0) seed(x - 1, y);
     if (x < Wd - 1) seed(x + 1, y);
     if (y > 0) seed(x, y - 1);
@@ -79,7 +90,9 @@ async function place(size, padFrac, bg) {
     })
     .sharpen({ sigma: 0.6, m1: 1, m2: 2 })
     .toBuffer();
-  return sharp({ create: { width: size, height: size, channels: 4, background: bg } })
+  return sharp({
+    create: { width: size, height: size, channels: 4, background: bg },
+  })
     .composite([{ input: logo, gravity: "center" }])
     .png({ compressionLevel: 9 })
     .toBuffer();
@@ -96,12 +109,16 @@ await sharp(await place(512, 0.1, WHITE)).toFile("public/icon-512.png");
 await sharp(await place(1024, 0.05, TRANSPARENT)).toFile("public/logo.png");
 
 // ── OG 이미지: 흰 배경 + 은은한 그라데이션 + 가운데 엠블럼 (텍스트 없음) ──
-const W = 1200, H = 630, emblemPx = 460;
+const W = 1200,
+  H = 630,
+  emblemPx = 460;
 const emX = Math.round((W - emblemPx) / 2);
 const emY = Math.round((H - emblemPx) / 2);
-const cx = W / 2, cy = H / 2;
+const cx = W / 2,
+  cy = H / 2;
 const ogEmblem = await place(emblemPx, 0.04, TRANSPARENT);
-const ogBg = Buffer.from(`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+const ogBg =
+  Buffer.from(`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EEF3FC"/></linearGradient>

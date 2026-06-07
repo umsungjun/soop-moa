@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
-const SOOP_FRAME_SRC = "https://*.sooplive.com https://*.sooplive.co.kr https://*.afreecatv.com";
-const SOOP_IMG_SRC = "https://*.sooplive.com https://*.sooplive.co.kr https://*.afreecatv.com";
+const SOOP_FRAME_SRC =
+  "https://*.sooplive.com https://*.sooplive.co.kr https://*.afreecatv.com";
+const SOOP_IMG_SRC =
+  "https://*.sooplive.com https://*.sooplive.co.kr https://*.afreecatv.com";
 
 // NOTE: script-src/style-src use 'unsafe-inline' for MVP compatibility with
 // Next.js inline runtime. Harden later with a nonce-based CSP if needed.

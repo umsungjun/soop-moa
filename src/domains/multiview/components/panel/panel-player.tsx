@@ -2,8 +2,11 @@
 
 import { useMemo, useState } from "react";
 import { ExternalLink } from "lucide-react";
-import { buildEmbedSrc, buildWatchUrl } from "@/domains/multiview/utils/embed-url";
 import type { PanelOptions } from "@/domains/multiview/types";
+import {
+  buildEmbedSrc,
+  buildWatchUrl,
+} from "@/domains/multiview/utils/embed-url";
 
 interface PanelPlayerProps {
   bjId: string;

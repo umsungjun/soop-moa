@@ -1,6 +1,5 @@
 import "server-only";
-
-import { publicConfig, getServerEnv } from "@/lib/env";
+import { getServerEnv, publicConfig } from "@/lib/env";
 import { SOOP_API_BASE, SOOP_ENDPOINTS } from "./endpoints";
 import { SoopApiError } from "./errors";
 import type {
@@ -63,7 +62,9 @@ async function parseJson<T>(res: Response, endpoint: string): Promise<T> {
 
 // ── OAuth ────────────────────────────────────────────────────────────
 
-export async function requestAccessToken(code: string): Promise<SoopTokenResponse> {
+export async function requestAccessToken(
+  code: string,
+): Promise<SoopTokenResponse> {
   const { SOOP_CLIENT_SECRET } = getServerEnv();
   const body = new URLSearchParams({
     grant_type: "authorization_code",
@@ -152,7 +153,10 @@ export async function getCategoryList(): Promise<Category[]> {
   });
   const endpoint = `${SOOP_ENDPOINTS.broadCategoryList}?${query.toString()}`;
   const res = await soopFetch(endpoint);
-  const json = await parseJson<{ broad_category?: SoopCategory[] }>(res, endpoint);
+  const json = await parseJson<{ broad_category?: SoopCategory[] }>(
+    res,
+    endpoint,
+  );
   // Flatten to top-level categories for the filter chips.
   return (json.broad_category ?? []).map((c) => ({
     no: c.cate_no,
@@ -171,8 +175,9 @@ export async function getStationInfo(
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body,
   });
-  const json = await parseJson<
-    { data?: SoopStationInfo } | SoopStationInfo
-  >(res, SOOP_ENDPOINTS.userStationInfo);
+  const json = await parseJson<{ data?: SoopStationInfo } | SoopStationInfo>(
+    res,
+    SOOP_ENDPOINTS.userStationInfo,
+  );
   return "data" in json && json.data ? json.data : (json as SoopStationInfo);
 }

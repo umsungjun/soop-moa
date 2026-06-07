@@ -1,7 +1,7 @@
 "use client";
 
-import { Separator } from "react-resizable-panels";
 import { GripHorizontal, GripVertical } from "lucide-react";
+import { Separator } from "react-resizable-panels";
 import { cn } from "@/lib/utils";
 
 interface ResizableSplitterProps {
