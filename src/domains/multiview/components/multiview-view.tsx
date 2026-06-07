@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { MAX_PANELS } from "@/domains/multiview/constants";
 import { useMultiviewState } from "@/domains/multiview/hooks/use-multiview-state";
 import type { Panel as PanelData } from "@/domains/multiview/types";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -8,6 +10,8 @@ import { cn } from "@/lib/utils";
 import { AddStreamDialog } from "./add-stream/add-stream-dialog";
 import { GridLayout } from "./grid/grid-layout";
 import { MobileStack } from "./grid/mobile-stack";
+import { HdAccessNotice } from "./hd-access-notice";
+import { LiveSidebar } from "./live-sidebar/live-sidebar";
 import { MultiviewToolbar } from "./multiview-toolbar";
 import { PanelSlot } from "./panel/panel-slot";
 
@@ -22,6 +26,7 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
   const [isResizing, setIsResizing] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [targetPanelId, setTargetPanelId] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const openAddForPanel = useCallback((panelId: string) => {
     setTargetPanelId(panelId);
@@ -35,10 +40,40 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
 
   const handlePick = useCallback(
     (bjId: string) => {
+      // 같은 방송이 다른 패널에 이미 있으면 그 패널로 포커스만 옮긴다.
+      const existing = state?.panels.find(
+        (p) => p.bjId === bjId && p.id !== targetPanelId,
+      );
+      if (existing) {
+        actions.setFocus(existing.id);
+        toast.info("이미 추가된 방송이에요");
+        return;
+      }
       if (targetPanelId) actions.assignToPanel(targetPanelId, bjId);
       else actions.addStream(bjId);
     },
-    [actions, targetPanelId],
+    [actions, targetPanelId, state],
+  );
+
+  // 사이드바에서 추가 — 중복이면 기존 패널 포커스, 가득 찼으면 알린다.
+  const handleSidebarPick = useCallback(
+    (bjId: string) => {
+      if (!state) return;
+      const existing = state.panels.find((p) => p.bjId === bjId);
+      if (existing) {
+        actions.setFocus(existing.id);
+        toast.info("이미 추가된 방송이에요");
+        return;
+      }
+      const full =
+        state.panels.length >= MAX_PANELS && state.panels.every((p) => p.bjId);
+      if (full) {
+        toast.error(`패널은 최대 ${MAX_PANELS}개까지 추가할 수 있어요`);
+        return;
+      }
+      actions.addStream(bjId);
+    },
+    [actions, state],
   );
 
   // ── Keyboard shortcuts ──
@@ -58,9 +93,6 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
       if (e.key >= "1" && e.key <= "4") {
         const idx = Number(e.key) - 1;
         if (s.panels[idx]) actions.setFocus(s.panels[idx].id);
-      } else if (e.key === "m" || e.key === "M") {
-        if (e.shiftKey) actions.setGlobalMuted(!s.globalMuted);
-        else if (s.focusedId) actions.toggleMute(s.focusedId);
       } else if (e.key === "c" || e.key === "C") {
         if (s.focusedId) actions.toggleChat(s.focusedId);
       } else if (e.key === "+" || e.key === "=") {
@@ -82,7 +114,6 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
         onFocus={() => actions.setFocus(panel.id)}
         onRequestAdd={() => openAddForPanel(panel.id)}
         onRemove={() => actions.removePanel(panel.id)}
-        onToggleMute={() => actions.toggleMute(panel.id)}
         onToggleChat={() => actions.toggleChat(panel.id)}
       />
     ),
@@ -104,33 +135,48 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
       <MultiviewToolbar
         panelCount={state.panels.length}
         filledCount={filledCount}
-        globalMuted={state.globalMuted}
-        onToggleGlobalMute={() => actions.setGlobalMuted(!state.globalMuted)}
+        sidebarOpen={sidebarOpen}
+        onToggleSidebar={() => setSidebarOpen((o) => !o)}
         onResetLayout={actions.reset}
         onAddPanel={openAddNew}
       />
 
-      <div
-        className={cn(
-          "min-h-0 flex-1 p-2",
-          isResizing && "[&_iframe]:pointer-events-none",
-        )}
-      >
-        {isMobile ? (
-          <MobileStack
-            panels={state.panels}
-            activeId={state.focusedId}
-            onActivate={actions.setFocus}
-            onAddPanel={openAddNew}
-            renderSlot={renderSlot}
+      <HdAccessNotice />
+
+      <div className="flex min-h-0 flex-1">
+        {/* 좌측 라이브 사이드바 — 데스크톱 + 열림 상태에서만. 모바일은 추가 다이얼로그 사용. */}
+        {!isMobile && sidebarOpen ? (
+          <LiveSidebar
+            onPick={handleSidebarPick}
+            onClose={() => setSidebarOpen(false)}
+            renderLiveList={renderLiveList}
           />
-        ) : (
-          <GridLayout
-            panels={state.panels}
-            renderSlot={renderSlot}
-            onResizingChange={setIsResizing}
-          />
-        )}
+        ) : null}
+
+        <div
+          className={cn(
+            "min-h-0 flex-1 p-2",
+            isResizing && "[&_iframe]:pointer-events-none",
+          )}
+        >
+          {isMobile ? (
+            <MobileStack
+              panels={state.panels}
+              activeId={state.focusedId}
+              onActivate={actions.setFocus}
+              onAddPanel={openAddNew}
+              renderSlot={renderSlot}
+            />
+          ) : (
+            <GridLayout
+              panels={state.panels}
+              sizes={state.sizes}
+              renderSlot={renderSlot}
+              onSizesChange={actions.setSizes}
+              onResizingChange={setIsResizing}
+            />
+          )}
+        </div>
       </div>
 
       <AddStreamDialog

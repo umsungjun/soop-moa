@@ -14,7 +14,6 @@ interface PanelSlotProps {
   onFocus: () => void;
   onRequestAdd: () => void;
   onRemove: () => void;
-  onToggleMute: () => void;
   onToggleChat: () => void;
 }
 
@@ -25,7 +24,6 @@ export function PanelSlot({
   onFocus,
   onRequestAdd,
   onRemove,
-  onToggleMute,
   onToggleChat,
 }: PanelSlotProps) {
   const [reloadNonce, setReloadNonce] = useState(0);
@@ -44,9 +42,7 @@ export function PanelSlot({
       {panel.bjId ? (
         <>
           <PanelControlBar
-            bjId={panel.bjId}
             options={panel.options}
-            onToggleMute={onToggleMute}
             onToggleChat={onToggleChat}
             onReload={() => setReloadNonce((n) => n + 1)}
             onRemove={onRemove}

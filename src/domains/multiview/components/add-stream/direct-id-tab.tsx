@@ -8,9 +8,11 @@ import { parseBjId } from "@/domains/multiview/utils/validate-bj-id";
 
 interface DirectIdTabProps {
   onSubmit: (bjId: string) => void;
+  /** 사이드바처럼 상시 노출되는 곳에선 자동 포커스를 끈다. */
+  autoFocus?: boolean;
 }
 
-export function DirectIdTab({ onSubmit }: DirectIdTabProps) {
+export function DirectIdTab({ onSubmit, autoFocus = true }: DirectIdTabProps) {
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -38,7 +40,7 @@ export function DirectIdTab({ onSubmit }: DirectIdTabProps) {
           onChange={(e) => setValue(e.target.value)}
           placeholder="예: woowakgood 또는 play.sooplive.com/woowakgood"
           autoComplete="off"
-          autoFocus
+          autoFocus={autoFocus}
         />
         {error ? (
           <p className="text-destructive text-xs">{error}</p>
