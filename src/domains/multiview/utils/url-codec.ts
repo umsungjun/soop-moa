@@ -35,7 +35,8 @@ export function decodePanels(
   const panels: Panel[] = ids.map((raw, i) => {
     const bjId = raw !== EMPTY && isValidBjId(raw) ? raw : null;
     const optRaw = opts[i] ?? "";
-    const muted = optRaw.includes("m0") ? false : true;
+    // 기본은 음소거 해제. 명시적으로 m1이 있을 때만 음소거(공유 URL 호환 유지).
+    const muted = optRaw.includes("m1");
     const chat = optRaw.includes("c1");
     return { id: nanoid(6), bjId, options: { muted, chat } };
   });

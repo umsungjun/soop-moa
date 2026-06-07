@@ -1,39 +1,55 @@
 import { ArrowRight, LayoutGrid, Radio, Share2, Sparkles } from "lucide-react";
-import { LogoMark } from "@/components/layout/logo";
 import { Button } from "@/components/ui/button";
+import { LiveCard } from "@/domains/live/components/live-card";
+import type { LiveBroadcast } from "@/domains/live/types";
+import { getBroadList } from "@/lib/soop/client";
 
-const FEATURES = [
+// 인기 방송 목록을 60초 주기로 재생성(ISR)한다.
+export const revalidate = 60;
+
+const LIVE_COUNT = 9;
+
+const STEPS = [
+  {
+    icon: Radio,
+    title: "라이브 둘러보기",
+    desc: "실시간 방송 목록에서 보고 싶은 방송을 찾으세요.",
+  },
   {
     icon: LayoutGrid,
-    title: "최대 4분할 멀티뷰",
-    desc: "마우스로 화면 크기를 자유롭게 조절하며 여러 방송을 동시에.",
+    title: "멀티뷰에 담기",
+    desc: "클릭 한 번으로 최대 4개 방송을 한 화면에 동시에.",
   },
   {
     icon: Share2,
-    title: "URL로 공유",
-    desc: "지금 보고 있는 멀티뷰 구성을 링크 하나로 친구에게 전달.",
-  },
-  {
-    icon: Radio,
-    title: "라이브 바로 추가",
-    desc: "실시간 방송 목록에서 클릭 한 번으로 패널에 추가.",
+    title: "링크로 공유",
+    desc: "지금 보고 있는 구성을 URL 하나로 친구에게 전달.",
   },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  // 서버 컴포넌트에서 server-only SOOP 클라이언트를 직접 호출. 실패 시 빈 배열.
+  let live: LiveBroadcast[] = [];
+  try {
+    live = (await getBroadList({ orderType: "view_cnt" })).slice(0, LIVE_COUNT);
+  } catch {
+    live = [];
+  }
+
   return (
     <div className="relative overflow-hidden">
       {/* ambient glow */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[480px] opacity-60"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-120 opacity-60"
         style={{
           background:
             "radial-gradient(60% 60% at 50% 0%, color-mix(in oklab, var(--primary) 22%, transparent), transparent 70%)",
         }}
       />
 
-      <section className="mx-auto flex max-w-5xl flex-col items-center px-4 pt-20 pb-16 text-center sm:px-6">
+      {/* ── Hero: 서비스 소개 ── */}
+      <section className="mx-auto flex max-w-5xl flex-col items-center px-4 pt-20 pb-12 text-center sm:px-6">
         <div className="border-border bg-card/60 text-muted-foreground mb-6 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium backdrop-blur">
           <Sparkles className="text-primary size-3.5" />
           SOOP 공식 임베드 플레이어 기반
@@ -50,10 +66,10 @@ export default function LandingPage() {
           레이아웃, 그리고 URL 하나로 공유까지.
         </p>
 
-        <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
+        <div className="mt-8 flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row">
           <Button
             size="lg"
-            className="gap-1.5"
+            className="w-full gap-1.5 sm:w-auto"
             nativeButton={false}
             render={<a href="/multiview" />}
           >
@@ -63,7 +79,7 @@ export default function LandingPage() {
           <Button
             size="lg"
             variant="outline"
-            className="gap-1.5"
+            className="w-full gap-1.5 sm:w-auto"
             nativeButton={false}
             render={<a href="/live" />}
           >
@@ -71,42 +87,68 @@ export default function LandingPage() {
             라이브 둘러보기
           </Button>
         </div>
+      </section>
 
-        {/* signature 2x2 preview */}
-        <div className="ring-border bg-card/40 relative mt-16 w-full max-w-3xl rounded-2xl p-3 ring-1 backdrop-blur">
-          <div className="grid aspect-video grid-cols-2 grid-rows-2 gap-3">
-            {[0, 1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="from-primary/15 to-brand-accent/10 ring-border/60 relative animate-pulse overflow-hidden rounded-xl bg-linear-to-br ring-1"
-                style={{
-                  animationDelay: `${i * 0.4}s`,
-                  animationDuration: "3s",
-                }}
-              >
-                <div className="absolute inset-0 flex items-center justify-center opacity-30">
-                  <LogoMark className="size-10" />
-                </div>
-                <div className="bg-destructive absolute top-2 left-2 size-1.5 animate-pulse rounded-full" />
+      {/* ── 이용 방법 ── */}
+      <section className="mx-auto max-w-5xl px-4 pb-16 sm:px-6">
+        <div className="grid gap-4 sm:grid-cols-3">
+          {STEPS.map((s, i) => (
+            <div
+              key={s.title}
+              className="bg-card ring-border relative overflow-hidden rounded-2xl p-6 ring-1"
+            >
+              {/* 큰 단계 번호 — 특색 있는 배경 장식 */}
+              <span className="text-primary/15 pointer-events-none absolute top-2 right-4 text-6xl font-bold tabular-nums select-none">
+                {i + 1}
+              </span>
+              <div className="bg-primary/10 text-primary mb-4 flex size-10 items-center justify-center rounded-xl">
+                <s.icon className="size-5" />
               </div>
-            ))}
-          </div>
+              <h3 className="font-semibold">{s.title}</h3>
+              <p className="text-muted-foreground mt-1.5 text-sm text-pretty">
+                {s.desc}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-5xl gap-4 px-4 pb-24 sm:grid-cols-3 sm:px-6">
-        {FEATURES.map((f) => (
-          <div
-            key={f.title}
-            className="bg-card ring-border rounded-2xl p-6 ring-1"
-          >
-            <div className="bg-primary/10 text-primary mb-4 flex size-10 items-center justify-center rounded-xl">
-              <f.icon className="size-5" />
-            </div>
-            <h3 className="font-semibold">{f.title}</h3>
-            <p className="text-muted-foreground mt-1.5 text-sm">{f.desc}</p>
+      {/* ── 지금 인기 라이브 ── */}
+      <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
+        <div className="mb-5 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="flex items-center gap-2 text-xl font-bold tracking-tight sm:text-2xl">
+              <span className="bg-destructive inline-flex size-2 animate-pulse rounded-full" />
+              지금 인기 라이브
+            </h2>
+            <p className="text-muted-foreground mt-1 text-sm">
+              시청자가 많은 실시간 방송이에요.
+            </p>
           </div>
-        ))}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="shrink-0 gap-1"
+            nativeButton={false}
+            render={<a href="/live" />}
+          >
+            전체 보기
+            <ArrowRight className="size-4" />
+          </Button>
+        </div>
+
+        {live.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {live.map((b) => (
+              <LiveCard key={`${b.bjId}-${b.broadNo}`} broadcast={b} />
+            ))}
+          </div>
+        ) : (
+          <div className="border-border text-muted-foreground flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed py-20 text-center">
+            <Radio className="size-10 opacity-50" />
+            <p className="text-sm">지금은 표시할 라이브 방송이 없어요.</p>
+          </div>
+        )}
       </section>
     </div>
   );

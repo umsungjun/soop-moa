@@ -88,11 +88,18 @@ export function useMultiviewState() {
   // ── Actions ──
   const assignToPanel = useCallback(
     (panelId: string, bjId: string) => {
-      update((prev) => ({
-        ...prev,
-        panels: prev.panels.map((p) => (p.id === panelId ? { ...p, bjId } : p)),
-        focusedId: panelId,
-      }));
+      update((prev) => {
+        // 같은 방송이 다른 패널에 이미 있으면 중복 추가하지 않는다.
+        if (prev.panels.some((p) => p.bjId === bjId && p.id !== panelId))
+          return prev;
+        return {
+          ...prev,
+          panels: prev.panels.map((p) =>
+            p.id === panelId ? { ...p, bjId } : p,
+          ),
+          focusedId: panelId,
+        };
+      });
     },
     [update],
   );
@@ -101,6 +108,8 @@ export function useMultiviewState() {
   const addStream = useCallback(
     (bjId: string) => {
       update((prev) => {
+        // 이미 시청 중인 방송은 중복 추가하지 않는다.
+        if (prev.panels.some((p) => p.bjId === bjId)) return prev;
         const emptyIdx = prev.panels.findIndex((p) => p.bjId === null);
         if (emptyIdx !== -1) {
           const panels = prev.panels.slice();
@@ -109,7 +118,13 @@ export function useMultiviewState() {
         }
         if (prev.panels.length >= MAX_PANELS) return prev;
         const p = newPanel(bjId);
-        return { ...prev, panels: [...prev.panels, p], focusedId: p.id };
+        // 패널 수가 바뀌면 분할 비율 초기화.
+        return {
+          ...prev,
+          panels: [...prev.panels, p],
+          sizes: {},
+          focusedId: p.id,
+        };
       });
     },
     [update],
@@ -119,7 +134,8 @@ export function useMultiviewState() {
     update((prev) => {
       if (prev.panels.length >= MAX_PANELS) return prev;
       const p = newPanel(null);
-      return { ...prev, panels: [...prev.panels, p], focusedId: p.id };
+      // 패널 수가 바뀌면 분할 비율 초기화.
+      return { ...prev, panels: [...prev.panels, p], sizes: {}, focusedId: p.id };
     });
   }, [update]);
 
@@ -215,8 +231,8 @@ export function useMultiviewState() {
   );
 
   const setSizes = useCallback(
-    (group: keyof LayoutSizes, sizes: number[]) => {
-      update((prev) => ({ ...prev, sizes: { ...prev.sizes, [group]: sizes } }));
+    (patch: Partial<LayoutSizes>) => {
+      update((prev) => ({ ...prev, sizes: { ...prev.sizes, ...patch } }));
     },
     [update],
   );

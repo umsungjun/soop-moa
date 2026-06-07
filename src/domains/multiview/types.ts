@@ -12,15 +12,14 @@ export interface Panel {
 }
 
 /**
- * Resize ratios per layout group. Topology is fixed per panel count;
- * only the drag ratios are stored here (and persisted to localStorage).
- *  - root: outer horizontal split ratios
- *  - colA / colB: inner vertical split ratios (3/4-panel layouts)
+ * CSS 그리드 분할 비율. 토폴로지는 패널 수마다 고정이고, 드래그 비율만 저장된다.
+ * 패널 수가 바뀌면 비율은 초기화된다(localStorage에 영속).
+ *  - cols: 좌/우 컬럼 분율 [c0, c1] (2·3·4분할)
+ *  - rows: 상/하 행 분율 [r0, r1] (3·4분할)
  */
 export interface LayoutSizes {
-  root?: number[];
-  colA?: number[];
-  colB?: number[];
+  cols?: number[];
+  rows?: number[];
 }
 
 export interface MultiviewState {

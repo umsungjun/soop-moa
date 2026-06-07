@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { Heart, Radio } from "lucide-react";
+import { ExternalLink, Heart, LayoutGrid, Radio } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { LogoutButton } from "@/domains/me/components/logout-button";
 import {
   getSession,
   getValidAccessToken,
   isAuthenticated,
 } from "@/lib/session/helpers";
-import { getStationInfo } from "@/lib/soop/client";
+import { getBroadList, getStationInfo } from "@/lib/soop/client";
+import { SOOP_PLAY_BASE } from "@/lib/soop/endpoints";
 import { formatRelativeTime } from "@/utils/format";
 
 export const dynamic = "force-dynamic";
@@ -23,18 +26,35 @@ export default async function MePage() {
     redirect("/api/auth/login");
   }
 
+  const user = session.user!;
   let favoriteCount: number | undefined;
   let latelyBroad: string | undefined;
+  let userId = user.userId;
   try {
     const token = await getValidAccessToken(session);
     const info = await getStationInfo(token);
     favoriteCount = info.favorite_cnt;
     latelyBroad = info.lately_broad_date;
+    userId ??= info.user_id; // 이 필드 도입 이전 세션 백필
   } catch {
     // fall back to cached session info
   }
 
-  const user = session.user!;
+  // 현재 라이브 여부(best-effort): 인기 방송 목록에 본인이 있으면 방송 중으로 표시한다.
+  // 목록에 없을 때는 "오프라인"으로 단정하지 않고 배지를 숨긴다(상위 페이지 미등장 = false negative 가능).
+  let isLive = false;
+  if (userId) {
+    try {
+      const list = await getBroadList({ orderType: "view_cnt" });
+      isLive = list.some((b) => b.bjId === userId);
+    } catch {
+      // ignore — 라이브 여부는 부가 정보라 실패해도 무시
+    }
+  }
+
+  const channelUrl = userId
+    ? `${SOOP_PLAY_BASE}/${encodeURIComponent(userId)}`
+    : null;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
@@ -54,10 +74,48 @@ export default async function MePage() {
             ) : null}
           </div>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold tracking-tight">
-              {user.userNick}
-            </h1>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl font-bold tracking-tight">
+                {user.userNick}
+              </h1>
+              {isLive ? (
+                <span className="bg-destructive inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold text-white">
+                  <span className="size-1.5 animate-pulse rounded-full bg-white" />
+                  LIVE
+                </span>
+              ) : null}
+            </div>
             <p className="text-muted-foreground text-sm">{user.stationName}</p>
+            {userId ? (
+              <p className="text-muted-foreground mt-0.5 font-mono text-xs">
+                @{userId}
+              </p>
+            ) : null}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {channelUrl ? (
+              <Button
+                variant="outline"
+                size="sm"
+                nativeButton={false}
+                render={
+                  <a href={channelUrl} target="_blank" rel="noreferrer noopener" />
+                }
+              >
+                <ExternalLink />
+                SOOP 채널
+              </Button>
+            ) : null}
+            {userId ? (
+              <Button
+                size="sm"
+                nativeButton={false}
+                render={<a href={`/multiview?v=${encodeURIComponent(userId)}`} />}
+              >
+                <LayoutGrid />내 방송 멀티뷰로 열기
+              </Button>
+            ) : null}
+            <LogoutButton />
           </div>
         </div>
       </div>

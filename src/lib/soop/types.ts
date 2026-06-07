@@ -49,6 +49,7 @@ export interface LiveBroadcast {
   categoryName?: string;
   viewerCount: number;
   thumbnail?: string;
+  profileImage?: string;
   startedAt?: string;
   adult: boolean;
 }
