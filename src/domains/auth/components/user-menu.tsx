@@ -6,6 +6,7 @@ import { LogOut, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -56,16 +57,19 @@ export function UserMenu() {
         </span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>
-          <div className="flex flex-col">
-            <span className="truncate text-sm font-semibold">
-              {user.userNick}
-            </span>
-            <span className="text-muted-foreground truncate text-xs font-normal">
-              {user.stationName}
-            </span>
-          </div>
-        </DropdownMenuLabel>
+        {/* GroupLabel(Base UI)은 Group 안에 있어야 한다 — Group으로 감싼다. */}
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>
+            <div className="flex flex-col">
+              <span className="truncate text-sm font-semibold">
+                {user.userNick}
+              </span>
+              <span className="text-muted-foreground truncate text-xs font-normal">
+                {user.stationName}
+              </span>
+            </div>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem render={<a href="/me" />}>
           <User />내 프로필
