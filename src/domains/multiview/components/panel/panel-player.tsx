@@ -27,8 +27,9 @@ export function PanelPlayer({ bjId, options, reloadNonce }: PanelPlayerProps) {
     [bjId, options.muted, options.chat],
   );
 
-  // Re-mount the iframe when chat visibility or reload nonce changes.
-  const iframeKey = `${bjId}-${options.chat ? "chat" : "nochat"}-${reloadNonce}`;
+  // bjId 또는 명시적 새로고침(reloadNonce)일 때만 iframe을 재마운트한다.
+  // chat을 key에서 빼서 포커스/리사이즈 등 옵션과 무관한 리렌더에선 재마운트되지 않게 한다.
+  const iframeKey = `${bjId}-${reloadNonce}`;
 
   return (
     <div className="relative size-full bg-black">
@@ -37,7 +38,7 @@ export function PanelPlayer({ bjId, options, reloadNonce }: PanelPlayerProps) {
         src={src}
         title={`SOOP live - ${bjId}`}
         className="size-full border-0"
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen; local-network-access"
         allowFullScreen
         referrerPolicy="strict-origin-when-cross-origin"
         onError={() => setFailed(true)}

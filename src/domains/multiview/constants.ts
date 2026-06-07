@@ -2,7 +2,8 @@ export const MAX_PANELS = 4;
 export const MIN_PANEL_SIZE = 15; // percent
 
 export const DEFAULT_PANEL_OPTIONS = {
-  muted: true,
+  // 기본은 음소거 해제 — 음소거는 SOOP 플레이어 자체 컨트롤로 처리한다.
+  muted: false,
   chat: false,
 } as const;
 

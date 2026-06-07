@@ -39,8 +39,12 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-DNS-Prefetch-Control", value: "on" },
           {
+            // local-network-access: 크롬/엣지의 로컬 네트워크 접근 정책 대응.
+            // SOOP 임베드 플레이어가 로컬 "고화질 스트리머" 헬퍼(loopback)에 연결할 수 있도록
+            // self + play.sooplive.com 오리진에 한해 위임한다. (최종 허용은 사용자의 브라우저 권한 동의 필요.)
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
+            value:
+              'camera=(), microphone=(), geolocation=(), local-network-access=(self "https://play.sooplive.com")',
           },
         ],
       },

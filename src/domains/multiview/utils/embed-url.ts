@@ -15,7 +15,7 @@ interface EmbedParams {
 export function buildEmbedSrc({
   bjId,
   autoPlay = true,
-  muted = true,
+  muted = false,
   chat = false,
 }: EmbedParams): string {
   const query = new URLSearchParams({
