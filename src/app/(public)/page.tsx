@@ -1,6 +1,39 @@
 import { ArrowRight, LayoutGrid, Radio, Share2, Sparkles } from "lucide-react";
 import { LogoMark } from "@/components/layout/logo";
 import { Button } from "@/components/ui/button";
+import { PreviewGrid } from "@/domains/live/components/preview-grid";
+import type { LiveBroadcast } from "@/domains/live/types";
+import { getBroadList } from "@/lib/soop/client";
+
+// 미리보기 그리드 크기 — 한 변의 칸 수(3 → 3×3 = 9개). 한 곳에서 조정.
+const PREVIEW_COLUMNS = 3 as const;
+const PREVIEW_COUNT = PREVIEW_COLUMNS * PREVIEW_COLUMNS;
+
+// 인기 방송 목록을 서버에서 60초 주기로 재생성(ISR)해 정적 랜딩 성격을 유지한다.
+export const revalidate = 60;
+
+/** API 실패/방송 부족 시 폴백 — 기존 펄스 애니메이션 플레이스홀더(2×2). */
+function PlaceholderGrid() {
+  return (
+    <div className="grid aspect-video grid-cols-2 grid-rows-2 gap-3">
+      {[0, 1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="from-primary/15 to-brand-accent/10 ring-border/60 relative animate-pulse overflow-hidden rounded-xl bg-linear-to-br ring-1"
+          style={{
+            animationDelay: `${i * 0.4}s`,
+            animationDuration: "3s",
+          }}
+        >
+          <div className="absolute inset-0 flex items-center justify-center opacity-30">
+            <LogoMark className="size-10" />
+          </div>
+          <div className="bg-destructive absolute top-2 left-2 size-1.5 animate-pulse rounded-full" />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 const FEATURES = [
   {
@@ -20,7 +53,16 @@ const FEATURES = [
   },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  // 서버 컴포넌트에서 server-only SOOP 클라이언트를 직접 호출. 실패 시 빈 배열로 폴백.
+  let topBroadcasts: LiveBroadcast[] = [];
+  try {
+    const list = await getBroadList({ orderType: "view_cnt" });
+    topBroadcasts = list.slice(0, PREVIEW_COUNT);
+  } catch {
+    topBroadcasts = [];
+  }
+
   return (
     <div className="relative overflow-hidden">
       {/* ambient glow */}
@@ -72,25 +114,13 @@ export default function LandingPage() {
           </Button>
         </div>
 
-        {/* signature 2x2 preview */}
+        {/* signature 미리보기 — 인기 실시간 방송 3×3, 데이터 부족/실패 시 플레이스홀더 */}
         <div className="ring-border bg-card/40 relative mt-16 w-full max-w-3xl rounded-2xl p-3 ring-1 backdrop-blur">
-          <div className="grid aspect-video grid-cols-2 grid-rows-2 gap-3">
-            {[0, 1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="from-primary/15 to-brand-accent/10 ring-border/60 relative animate-pulse overflow-hidden rounded-xl bg-linear-to-br ring-1"
-                style={{
-                  animationDelay: `${i * 0.4}s`,
-                  animationDuration: "3s",
-                }}
-              >
-                <div className="absolute inset-0 flex items-center justify-center opacity-30">
-                  <LogoMark className="size-10" />
-                </div>
-                <div className="bg-destructive absolute top-2 left-2 size-1.5 animate-pulse rounded-full" />
-              </div>
-            ))}
-          </div>
+          {topBroadcasts.length >= PREVIEW_COUNT ? (
+            <PreviewGrid broadcasts={topBroadcasts} columns={PREVIEW_COLUMNS} />
+          ) : (
+            <PlaceholderGrid />
+          )}
         </div>
       </section>
 
