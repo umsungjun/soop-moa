@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { DevAnnotations } from "@/components/dev/dev-annotations";
+import { QueryProvider } from "@/components/providers/query-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
@@ -145,8 +146,10 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col">
         <ThemeProvider>
-          {children}
-          <Toaster richColors position="top-center" />
+          <QueryProvider>
+            {children}
+            <Toaster richColors position="top-center" />
+          </QueryProvider>
         </ThemeProvider>
         {/* 개발 환경에서만 렌더 */}
         {process.env.NODE_ENV !== "production" && <DevAnnotations />}
