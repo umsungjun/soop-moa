@@ -246,7 +246,9 @@ export const listComments = async (
     }
   }
 
-  // 삭제된 답글은 숨기고, 삭제된 최상위 댓글은 답글이 남아 있을 때만 tombstone로 유지.
+  // 삭제된 답글은 숨긴다. 최상위 댓글을 지우면 대댓글도 함께 삭제되므로(softDeleteComment)
+  // 보통은 스레드 전체가 사라진다. 단, 살아 있는 답글이 남은 (구버전 데이터 등) 삭제 댓글은
+  // 답글 맥락을 위해 tombstone("삭제된 댓글")로 유지한다.
   for (const top of tops) {
     top.replies = top.replies.filter((reply) => !reply.isDeleted);
   }
@@ -296,10 +298,14 @@ export const softDeleteComment = async (
   if (existing.author_id !== authorId) {
     throw new SupabaseDataError({ message: "Forbidden", status: 403 });
   }
+  // 댓글을 지우면 그 대댓글도 함께 soft delete 한다.
+  // 대댓글은 1단계까지만 허용되므로 자식(parent_id = id) 한 단계만 처리하면 충분하다.
+  // 이미 삭제된 행은 건드리지 않아 각자의 최초 삭제 시각을 보존한다.
   const { error } = await admin
     .from("comments")
     .update({ deleted_at: new Date().toISOString() })
-    .eq("id", id);
+    .or(`id.eq.${id},parent_id.eq.${id}`)
+    .is("deleted_at", null);
   if (error) throw mapPgError(error);
 };
 
