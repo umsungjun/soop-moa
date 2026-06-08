@@ -4,18 +4,20 @@ const SOOP_FRAME_SRC =
   "https://*.sooplive.com https://*.sooplive.co.kr https://*.afreecatv.com";
 const SOOP_IMG_SRC =
   "https://*.sooplive.com https://*.sooplive.co.kr https://*.afreecatv.com";
+// Microsoft Clarity(세션 분석)가 태그 스크립트 로드·비콘 전송에 쓰는 출처.
+const CLARITY_SRC = "https://*.clarity.ms";
 
 // NOTE: script-src/style-src use 'unsafe-inline' for MVP compatibility with
 // Next.js inline runtime. Harden later with a nonce-based CSP if needed.
 const csp = [
   `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline' 'unsafe-eval'`,
+  `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${CLARITY_SRC}`,
   `style-src 'self' 'unsafe-inline'`,
-  `img-src 'self' data: blob: ${SOOP_IMG_SRC}`,
+  `img-src 'self' data: blob: ${SOOP_IMG_SRC} ${CLARITY_SRC}`,
   `media-src 'self' blob: ${SOOP_FRAME_SRC}`,
   `font-src 'self' data:`,
   `frame-src 'self' ${SOOP_FRAME_SRC}`,
-  `connect-src 'self' https://*.sooplive.com https://*.sooplive.co.kr`,
+  `connect-src 'self' https://*.sooplive.com https://*.sooplive.co.kr ${CLARITY_SRC} https://c.bing.com`,
   `object-src 'none'`,
   `base-uri 'self'`,
   `frame-ancestors 'self'`,

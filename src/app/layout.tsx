@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Clarity } from "@/components/analytics/clarity";
 import { DevAnnotations } from "@/components/dev/dev-annotations";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
@@ -153,6 +154,7 @@ export default function RootLayout({
         </ThemeProvider>
         {/* 개발 환경에서만 렌더 */}
         {process.env.NODE_ENV !== "production" && <DevAnnotations />}
+        <Clarity />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
