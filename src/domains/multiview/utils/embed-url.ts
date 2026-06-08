@@ -9,7 +9,6 @@ interface EmbedParams {
 
 /**
  * Builds the SOOP live embed iframe src.
- * NOTE: pattern + query params are best-effort and pending live verification.
  *   https://play.sooplive.com/{bjId}/embed?autoPlay=&mutePlay=&showChat=
  */
 export function buildEmbedSrc({

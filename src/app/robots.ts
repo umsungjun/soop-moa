@@ -12,10 +12,11 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/live", "/multiview"],
+        allow: ["/", "/live", "/multiview", "/community"],
         disallow: [
           "/api/", // 서버 엔드포인트 — 색인 대상 아님
           "/me", // 개인 프로필 — 페이지도 noindex, 여기서 한 번 더 차단
+          "/community/write", // 글쓰기 — 로그인 전용·noindex, 여기서 한 번 더 차단
         ],
       },
     ],

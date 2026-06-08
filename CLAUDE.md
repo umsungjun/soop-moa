@@ -58,14 +58,14 @@ Feature code lives under `src/domains/{auth,community,live,multiview}`, each sel
 - All client state lives in `useMultiviewState()` (`domains/multiview/hooks`). State = `panels[]` (1..`MAX_PANELS` = 4) + per-group resize `sizes` + `focusedId` + `globalMuted`.
 - **Persistence & sharing**: on mount, hydrate in priority order **URL (`?v=&o=`) → localStorage → default**; on change, persist debounced to both the URL (`history.replaceState`, 300ms) and localStorage (800ms).
 - **URL codec** (`utils/url-codec.ts`): `v` = pipe-joined bjIds (`_` marks an empty slot), `o` = per-panel options `m{0|1}c{0|1}`. This is what makes a layout shareable by a single link.
-- **Grid topology is fixed per panel count** (`components/grid/grid-layout.tsx`, distinct 1/2/3/4 layouts built from `react-resizable-panels`); only the drag ratios persist in `sizes`, and changing panel count resets them.
+- **Grid topology is fixed per panel count** (`components/grid/grid-layout.tsx`, distinct 1/2/3/4 layouts with custom drag-resize handles); only the drag ratios persist in `sizes`, and changing panel count resets them.
 - Each panel renders a SOOP embed iframe built by `utils/embed-url.ts`.
 
 ### UI & styling
 
 - Components are **shadcn** (`style: base-nova`) generated on top of **Base UI** (`@base-ui/react`) headless primitives in `src/components/ui/`. Base UI uses a polymorphic `render` prop; when a `Button` renders a non-`<button>` element (e.g. a navigation link), pass `nativeButton={false}` (Base UI defaults it to `true`, which warns otherwise).
 - **Tailwind v4** — there is no `tailwind.config`. Theme tokens (the cool-blue "Cinema Grid" design system, light + dark) live in `@theme` / `:root` blocks in `src/app/globals.css`.
-- Toasts via `sonner`, theming via `next-themes`, icons via `lucide-react`, animation via `motion`.
+- Toasts via `sonner`, theming via `next-themes`, icons via `lucide-react`.
 
 ### Security headers
 
