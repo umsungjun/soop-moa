@@ -22,20 +22,25 @@ export default function CommentSection({ postId }: CommentSectionProps) {
   const canWrite = isAuthenticated && !!user?.userId;
 
   return (
-    <section className="mt-8">
-      <h2 className="mb-3 text-sm font-semibold">댓글 {totalCount}</h2>
+    <section className="mt-10">
+      <h2 className="mb-4 flex items-center gap-2 text-base font-semibold">
+        댓글
+        <span className="bg-primary/10 text-primary rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums">
+          {totalCount}
+        </span>
+      </h2>
 
       {canWrite ? (
         <CommentForm onSubmit={(body) => createComment({ body })} />
       ) : isAuthenticated ? (
-        <div className="ring-border rounded-xl p-4 text-sm ring-1">
+        <div className="ring-foreground/10 bg-card rounded-2xl p-4 text-sm shadow-sm ring-1">
           <p className="text-muted-foreground">
             SOOP 계정을 식별할 수 없어 댓글을 남길 수 없습니다. SOOP 프로필
             이미지를 설정한 뒤 다시 로그인해 주세요.
           </p>
         </div>
       ) : (
-        <div className="ring-border flex items-center justify-between gap-3 rounded-xl p-4 ring-1">
+        <div className="ring-foreground/10 bg-card flex items-center justify-between gap-3 rounded-2xl p-4 shadow-sm ring-1">
           <p className="text-muted-foreground text-sm">
             로그인 후 댓글을 남길 수 있습니다.
           </p>

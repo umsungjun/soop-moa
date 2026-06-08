@@ -43,22 +43,30 @@ export default function ReactionButtons({
   return (
     <div className="flex items-center gap-2">
       <Button
-        variant={myReaction === "like" ? "secondary" : "outline"}
+        variant="outline"
         size="sm"
         onClick={() => handle("like")}
         disabled={isPending}
-        className={cn(myReaction === "like" && "text-primary")}
+        className={cn(
+          "rounded-full px-4 transition-all",
+          myReaction === "like" &&
+            "from-primary to-brand-accent text-primary-foreground shadow-primary/25 hover:text-primary-foreground border-transparent bg-linear-to-r shadow-sm hover:brightness-110",
+        )}
         aria-pressed={myReaction === "like"}
       >
         <ThumbsUp className="size-4" />
         <span className="tabular-nums">{likeCount}</span>
       </Button>
       <Button
-        variant={myReaction === "dislike" ? "secondary" : "outline"}
+        variant="outline"
         size="sm"
         onClick={() => handle("dislike")}
         disabled={isPending}
-        className={cn(myReaction === "dislike" && "text-destructive")}
+        className={cn(
+          "rounded-full px-4 transition-all",
+          myReaction === "dislike" &&
+            "border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15 hover:text-destructive",
+        )}
         aria-pressed={myReaction === "dislike"}
       >
         <ThumbsDown className="size-4" />

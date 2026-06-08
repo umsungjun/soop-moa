@@ -28,9 +28,9 @@ export default function PostForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="post-title" className="text-sm font-medium">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <div className="flex flex-col gap-2">
+        <label htmlFor="post-title" className="text-sm font-semibold">
           제목
         </label>
         <Input
@@ -39,13 +39,14 @@ export default function PostForm() {
           onChange={(e) => setTitle(e.target.value)}
           placeholder="제목을 입력하세요"
           maxLength={200}
+          className="h-11 rounded-xl text-base"
           autoFocus
         />
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <label htmlFor="post-body" className="text-sm font-medium">
+          <label htmlFor="post-body" className="text-sm font-semibold">
             내용
           </label>
           <span className="text-muted-foreground text-xs tabular-nums">
@@ -58,7 +59,7 @@ export default function PostForm() {
           onChange={(e) => setBody(e.target.value)}
           placeholder="내용을 입력하세요"
           maxLength={10000}
-          className="min-h-60"
+          className="min-h-72 rounded-xl text-base"
         />
       </div>
 
@@ -66,13 +67,18 @@ export default function PostForm() {
 
       <div className="flex items-center justify-end gap-2">
         <Button
-          variant="outline"
+          variant="ghost"
           nativeButton={false}
           render={<Link href="/community" />}
         >
           취소
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          variant="brand"
+          className="rounded-full px-5 font-semibold"
+          disabled={isSubmitting}
+        >
           {isSubmitting ? "등록 중…" : "등록"}
         </Button>
       </div>
