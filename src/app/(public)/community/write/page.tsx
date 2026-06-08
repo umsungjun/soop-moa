@@ -59,7 +59,7 @@ export default async function CommunityWritePage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
       <Link
         href="/community"
         className="text-muted-foreground hover:text-foreground bg-card ring-foreground/10 hover:ring-foreground/20 mb-6 inline-flex items-center gap-1 rounded-full py-1.5 pr-3.5 pl-2.5 text-sm shadow-sm ring-1 transition-all"
