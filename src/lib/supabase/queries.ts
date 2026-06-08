@@ -154,6 +154,23 @@ export const listPosts = async (opts: {
   };
 };
 
+/** 사이트맵용 — 삭제되지 않은 글의 id·수정 시각. 최신순, 사이트맵 URL 한도(5만) 여유로 상한 5000. */
+export const listPostsForSitemap = async (): Promise<
+  { id: string; updatedAt: Date }[]
+> => {
+  const { data, error } = await getSupabaseAdmin()
+    .from("posts")
+    .select("id,updated_at")
+    .is("deleted_at", null)
+    .order("created_at", { ascending: false })
+    .limit(5000);
+  if (error) throw mapPgError(error);
+  return (data ?? []).map((r) => ({
+    id: r.id as string,
+    updatedAt: new Date(r.updated_at as string),
+  }));
+};
+
 /** 삭제된 글도 tombstone로 반환한다(상세 페이지에서 "삭제된 글" 표시 + 댓글 유지). */
 export const getPost = async (
   id: string,
