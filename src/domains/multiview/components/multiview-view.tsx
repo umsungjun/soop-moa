@@ -109,7 +109,8 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
     (panel: PanelData) => (
       <PanelSlot
         panel={panel}
-        focused={state?.focusedId === panel.id}
+        // 모바일 세로 스택은 한 번에 한 화면씩 보므로 포커스 링(파란 테두리)을 띄우지 않는다.
+        focused={!isMobile && state?.focusedId === panel.id}
         canRemove={(state?.panels.length ?? 1) > 1}
         onFocus={() => actions.setFocus(panel.id)}
         onRequestAdd={() => openAddForPanel(panel.id)}
@@ -117,7 +118,7 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
         onToggleChat={() => actions.toggleChat(panel.id)}
       />
     ),
-    [state, actions, openAddForPanel],
+    [state, actions, openAddForPanel, isMobile],
   );
 
   if (!state) {
@@ -162,8 +163,6 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
           {isMobile ? (
             <MobileStack
               panels={state.panels}
-              activeId={state.focusedId}
-              onActivate={actions.setFocus}
               onAddPanel={openAddNew}
               renderSlot={renderSlot}
             />
