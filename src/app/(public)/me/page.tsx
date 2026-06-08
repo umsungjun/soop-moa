@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { redirect } from "next/navigation";
-import { ExternalLink, Heart, LayoutGrid, Radio } from "lucide-react";
+import {
+  ExternalLink,
+  Heart,
+  LayoutGrid,
+  Radio,
+  UserRound,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LoginButton } from "@/domains/auth/components/login-button";
 import { LogoutButton } from "@/domains/me/components/logout-button";
 import {
   getSession,
@@ -22,8 +28,26 @@ export const metadata: Metadata = {
 
 export default async function MePage() {
   const session = await getSession();
+  // 비로그인 상태에서는 자동으로 로그인 플로우를 태우지 않는다.
+  // (SOOP SSO가 살아 있으면 무프롬프트 재로그인이 일어나 "로그아웃 의도"를 무시하게 됨)
+  // 대신 명시적으로 로그인할 수 있는 안내 화면을 보여준다.
   if (!isAuthenticated(session)) {
-    redirect("/api/auth/login");
+    return (
+      <div className="mx-auto flex max-w-3xl flex-col items-center gap-5 px-4 py-24 text-center sm:px-6">
+        <div className="bg-primary/10 text-primary flex size-14 items-center justify-center rounded-2xl">
+          <UserRound className="size-7" />
+        </div>
+        <div className="space-y-1.5">
+          <h1 className="text-xl font-bold tracking-tight">
+            로그인이 필요합니다
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            내 프로필을 보려면 SOOP 계정으로 로그인하세요.
+          </p>
+        </div>
+        <LoginButton />
+      </div>
+    );
   }
 
   const user = session.user!;
@@ -99,7 +123,11 @@ export default async function MePage() {
                 size="sm"
                 nativeButton={false}
                 render={
-                  <a href={channelUrl} target="_blank" rel="noreferrer noopener" />
+                  <a
+                    href={channelUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  />
                 }
               >
                 <ExternalLink />
@@ -110,7 +138,9 @@ export default async function MePage() {
               <Button
                 size="sm"
                 nativeButton={false}
-                render={<a href={`/multiview?v=${encodeURIComponent(userId)}`} />}
+                render={
+                  <a href={`/multiview?v=${encodeURIComponent(userId)}`} />
+                }
               >
                 <LayoutGrid />내 방송 멀티뷰로 열기
               </Button>

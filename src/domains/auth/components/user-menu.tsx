@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { LogOut, User } from "lucide-react";
 import {
   DropdownMenu,
@@ -13,18 +12,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLogout } from "@/domains/auth/hooks/use-logout";
 import { useSession } from "@/domains/auth/hooks/use-session";
 import { LoginButton } from "./login-button";
 
 export function UserMenu() {
-  const { user, isAuthenticated, isLoading, mutate } = useSession();
-  const router = useRouter();
-
-  async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
-    await mutate();
-    router.refresh();
-  }
+  const { user, isAuthenticated, isLoading } = useSession();
+  const logout = useLogout();
 
   if (isLoading) {
     return <Skeleton className="size-8 rounded-full" />;
@@ -74,7 +68,7 @@ export function UserMenu() {
         <DropdownMenuItem render={<a href="/me" />}>
           <User />내 프로필
         </DropdownMenuItem>
-        <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+        <DropdownMenuItem variant="destructive" onClick={logout}>
           <LogOut />
           로그아웃
         </DropdownMenuItem>

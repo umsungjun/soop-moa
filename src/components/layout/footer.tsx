@@ -1,24 +1,60 @@
+import { Mail } from "lucide-react";
 import { siteConfig } from "@/config/site";
+
+// lucide v1은 브랜드 아이콘을 제공하지 않아 GitHub 마크는 인라인 SVG로 둔다.
+function GithubMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+      className={className}
+    >
+      <path d="M12 .5C5.73.5.5 5.74.5 12.02c0 5.1 3.29 9.42 7.86 10.95.58.1.79-.25.79-.56v-2.02c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.78 1.2 1.78 1.2 1.03 1.78 2.7 1.27 3.36.97.1-.75.4-1.27.73-1.56-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.12 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.26 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.53 11.53 0 0 0 23.5 12.02C23.5 5.74 18.27.5 12 .5Z" />
+    </svg>
+  );
+}
 
 export function Footer() {
   return (
     <footer className="border-border/60 text-muted-foreground border-t">
-      <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-xs sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-xs sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <p>
           {siteConfig.name} — SOOP 공개 임베드 플레이어 기반 멀티뷰. 비공식
           프로젝트입니다.
         </p>
-        <p>
-          Powered by{" "}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <a
-            href={siteConfig.links.soop}
+            href={`mailto:${siteConfig.links.email}`}
+            className="hover:text-foreground inline-flex items-center gap-1.5 underline-offset-2 hover:underline"
+          >
+            <Mail className="size-3.5" />
+            문의
+          </a>
+          <a
+            href={siteConfig.links.github}
             target="_blank"
             rel="noreferrer noopener"
-            className="hover:text-foreground underline underline-offset-2"
+            className="hover:text-foreground inline-flex items-center gap-1.5 underline-offset-2 hover:underline"
           >
-            SOOP Open API
+            <GithubMark className="size-3.5" />
+            GitHub
           </a>
-        </p>
+          <span className="text-border/80" aria-hidden>
+            ·
+          </span>
+          <span>
+            Powered by{" "}
+            <a
+              href={siteConfig.links.soop}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="hover:text-foreground underline underline-offset-2"
+            >
+              SOOP Open API
+            </a>
+          </span>
+        </div>
       </div>
     </footer>
   );
