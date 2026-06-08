@@ -24,7 +24,7 @@ export default async function CommunityPage() {
   const initialFirstPage = await listPosts({ limit: 20 });
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
       <div className="mb-8 flex items-end justify-between gap-4">
         <div className="flex flex-col gap-1.5">
           <h1 className="text-3xl font-bold tracking-tight">커뮤니티</h1>
