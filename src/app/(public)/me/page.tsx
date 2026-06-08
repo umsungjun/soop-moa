@@ -1,12 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import {
-  ExternalLink,
-  Heart,
-  LayoutGrid,
-  Radio,
-  UserRound,
-} from "lucide-react";
+import { ExternalLink, Heart, Radio, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoginButton } from "@/domains/auth/components/login-button";
 import { LogoutButton } from "@/domains/me/components/logout-button";
@@ -16,7 +10,7 @@ import {
   isAuthenticated,
 } from "@/lib/session/helpers";
 import { getBroadList, getStationInfo } from "@/lib/soop/client";
-import { SOOP_PLAY_BASE } from "@/lib/soop/endpoints";
+import { SOOP_STATION_BASE } from "@/lib/soop/endpoints";
 import { formatRelativeTime } from "@/utils/format";
 
 export const dynamic = "force-dynamic";
@@ -77,7 +71,7 @@ export default async function MePage() {
   }
 
   const channelUrl = userId
-    ? `${SOOP_PLAY_BASE}/${encodeURIComponent(userId)}`
+    ? `${SOOP_STATION_BASE}/${encodeURIComponent(userId)}`
     : null;
 
   return (
@@ -132,17 +126,6 @@ export default async function MePage() {
               >
                 <ExternalLink />
                 SOOP 채널
-              </Button>
-            ) : null}
-            {userId ? (
-              <Button
-                size="sm"
-                nativeButton={false}
-                render={
-                  <a href={`/multiview?v=${encodeURIComponent(userId)}`} />
-                }
-              >
-                <LayoutGrid />내 방송 멀티뷰로 열기
               </Button>
             ) : null}
             <LogoutButton />
