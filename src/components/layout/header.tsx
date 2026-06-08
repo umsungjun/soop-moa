@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { LayoutGrid, Radio } from "lucide-react";
+import { LayoutGrid, MessagesSquare, Radio } from "lucide-react";
 import { UserMenu } from "@/domains/auth/components/user-menu";
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
@@ -10,6 +10,7 @@ import { ThemeToggle } from "./theme-toggle";
 const NAV = [
   { href: "/live", label: "라이브", icon: Radio },
   { href: "/multiview", label: "멀티뷰", icon: LayoutGrid },
+  { href: "/community", label: "커뮤니티", icon: MessagesSquare },
 ];
 
 export function Header() {

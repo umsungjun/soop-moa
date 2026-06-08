@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { siteConfig } from "@/config/site";
 import { getSession } from "@/lib/session/helpers";
 import { getStationInfo, requestAccessToken } from "@/lib/soop/client";
+import { bjIdFromProfileImage } from "@/lib/soop/profile";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +42,8 @@ export async function GET(request: NextRequest) {
       userNick: info.user_nick,
       stationName: info.station_name,
       profileImage: info.profile_image,
-      userId: info.user_id,
+      // SOOP stationinfo는 user_id를 주지 않으므로 프로필 URL에서 BJ id를 보강한다.
+      userId: info.user_id ?? bjIdFromProfileImage(info.profile_image),
     };
     await session.save();
   } catch (err) {
