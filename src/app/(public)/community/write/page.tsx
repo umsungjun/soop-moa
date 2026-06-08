@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { ImageOff, UserRound } from "lucide-react";
+import Link from "next/link";
+import { ChevronLeft, ImageOff, SquarePen, UserRound } from "lucide-react";
 import { LoginButton } from "@/domains/auth/components/login-button";
 import PostForm from "@/domains/community/components/post-form";
 import { getSession, isAuthenticated } from "@/lib/session/helpers";
@@ -17,9 +18,9 @@ export default async function CommunityWritePage() {
   // 비로그인 시 자동 리다이렉트 대신 안내 화면을 보여준다(SSO 자동 재로그인 방지).
   if (!isAuthenticated(session)) {
     return (
-      <div className="mx-auto flex max-w-7xl flex-col items-center gap-5 px-4 py-24 text-center sm:px-6">
-        <div className="bg-primary/10 text-primary flex size-14 items-center justify-center rounded-2xl">
-          <UserRound className="size-7" />
+      <div className="mx-auto flex max-w-3xl flex-col items-center gap-5 px-4 py-24 text-center sm:px-6">
+        <div className="from-primary/15 to-brand-accent/10 text-primary flex size-16 items-center justify-center rounded-2xl bg-linear-to-br">
+          <UserRound className="size-8" />
         </div>
         <div className="space-y-1.5">
           <h1 className="text-xl font-bold tracking-tight">
@@ -40,9 +41,9 @@ export default async function CommunityWritePage() {
     session.user?.userId ?? bjIdFromProfileImage(session.user?.profileImage);
   if (!userId) {
     return (
-      <div className="mx-auto flex max-w-7xl flex-col items-center gap-5 px-4 py-24 text-center sm:px-6">
-        <div className="bg-muted text-muted-foreground flex size-14 items-center justify-center rounded-2xl">
-          <ImageOff className="size-7" />
+      <div className="mx-auto flex max-w-3xl flex-col items-center gap-5 px-4 py-24 text-center sm:px-6">
+        <div className="bg-muted text-muted-foreground flex size-16 items-center justify-center rounded-2xl">
+          <ImageOff className="size-8" />
         </div>
         <div className="space-y-1.5">
           <h1 className="text-xl font-bold tracking-tight">
@@ -58,9 +59,28 @@ export default async function CommunityWritePage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <h1 className="mb-6 text-2xl font-bold tracking-tight">글쓰기</h1>
-      <PostForm />
+    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+      <Link
+        href="/community"
+        className="text-muted-foreground hover:text-foreground bg-card ring-foreground/10 hover:ring-foreground/20 mb-6 inline-flex items-center gap-1 rounded-full py-1.5 pr-3.5 pl-2.5 text-sm shadow-sm ring-1 transition-all"
+      >
+        <ChevronLeft className="size-4" />
+        목록
+      </Link>
+      <div className="mb-6 flex items-center gap-3">
+        <div className="from-primary/15 to-brand-accent/10 text-primary flex size-11 items-center justify-center rounded-2xl bg-linear-to-br">
+          <SquarePen className="size-5" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">글쓰기</h1>
+          <p className="text-muted-foreground text-sm">
+            커뮤니티에 새 글을 남겨보세요.
+          </p>
+        </div>
+      </div>
+      <div className="ring-foreground/10 rounded-2xl bg-card p-6 shadow-sm ring-1 sm:p-7">
+        <PostForm />
+      </div>
     </div>
   );
 }

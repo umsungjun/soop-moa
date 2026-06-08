@@ -17,6 +17,9 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
+        // 브랜드 그라데이션 CTA — primary→brand-accent 그라데이션 + 색 글로우.
+        brand:
+          "from-primary to-brand-accent text-primary-foreground shadow-primary/25 hover:shadow-primary/35 bg-linear-to-r shadow-md hover:shadow-lg hover:brightness-110",
       },
       size: {
         default:

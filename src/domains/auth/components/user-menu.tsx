@@ -65,10 +65,14 @@ export function UserMenu() {
           </DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem render={<a href="/me" />}>
+        <DropdownMenuItem className="cursor-pointer" render={<a href="/me" />}>
           <User />내 프로필
         </DropdownMenuItem>
-        <DropdownMenuItem variant="destructive" onClick={logout}>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          variant="destructive"
+          onClick={logout}
+        >
           <LogOut />
           로그아웃
         </DropdownMenuItem>

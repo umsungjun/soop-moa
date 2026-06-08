@@ -36,7 +36,7 @@ export default function CommentItem({
   };
 
   return (
-    <div className={cn(isReply && "border-border border-l pl-4")}>
+    <div className={cn(isReply && "border-border/70 ml-2 border-l-2 pl-4")}>
       <div className="py-3">
         {comment.isDeleted ? (
           <p className="text-muted-foreground text-sm italic">

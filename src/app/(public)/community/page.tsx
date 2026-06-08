@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SquarePen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PostList from "@/domains/community/components/post-list";
 import { listPosts } from "@/lib/supabase/queries";
@@ -23,15 +24,23 @@ export default async function CommunityPage() {
   const initialFirstPage = await listPosts({ limit: 20 });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <div className="mb-6 flex items-end justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold tracking-tight">커뮤니티</h1>
+    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+      <div className="mb-8 flex items-end justify-between gap-4">
+        <div className="flex flex-col gap-1.5">
+          <h1 className="text-3xl font-bold tracking-tight">커뮤니티</h1>
           <p className="text-muted-foreground text-sm">
             자유롭게 글을 남기고 댓글로 소통하세요.
           </p>
         </div>
-        <Button nativeButton={false} render={<Link href="/community/write" />}>
+        <Button
+          size="lg"
+          variant="brand"
+          nativeButton={false}
+          // hover 시 살짝 떠오르는 알약형 CTA.
+          className="rounded-full px-5 font-semibold transition-all hover:-translate-y-0.5"
+          render={<Link href="/community/write" />}
+        >
+          <SquarePen />
           글쓰기
         </Button>
       </div>
