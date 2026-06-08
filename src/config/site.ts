@@ -37,5 +37,3 @@ export const siteConfig = {
     email: "umseongjun@naver.com",
   },
 } as const;
-
-export type SiteConfig = typeof siteConfig;
