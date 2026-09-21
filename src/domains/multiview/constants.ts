@@ -10,3 +10,7 @@ export const DEFAULT_PANEL_OPTIONS = {
 export const LS_KEY_STATE = "soop-moa:multiview:v1";
 export const LS_KEY_RECENT = "soop-moa:multiview:recent";
 export const RECENT_MAX = 12;
+
+/** 크롬·엣지 로컬 네트워크 정책으로 고화질 시청이 막힐 때 안내하는 SOOP 공지. 멀티뷰 안내 배너와 가이드 페이지가 함께 참조한다. */
+export const HD_ACCESS_NOTICE_URL =
+  "https://sotong.sooplive.com/?board_type=servicenotice&work=view&b_no=9569";

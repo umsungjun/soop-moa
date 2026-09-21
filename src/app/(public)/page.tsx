@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { ArrowRight, LayoutGrid, Radio, Share2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LiveCard } from "@/domains/live/components/live-card";
@@ -6,6 +7,9 @@ import { getBroadList } from "@/lib/soop/client";
 
 // 인기 방송 목록을 60초 주기로 재생성(ISR)한다.
 export const revalidate = 60;
+
+// 루트 레이아웃에는 canonical을 두지 않으므로(noindex 페이지까지 상속하는 문제) 랜딩은 여기서 직접 선언한다.
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 const LIVE_COUNT = 9;
 
@@ -18,7 +22,7 @@ const STEPS = [
   {
     icon: LayoutGrid,
     title: "멀티뷰에 담기",
-    desc: "클릭 한 번으로 최대 4개 방송을 한 화면에 동시에.",
+    desc: "클릭 한 번으로 최대 4개 방송을 한 화면에. PC는 4분할, 모바일은 세로 스택.",
   },
   {
     icon: Share2,
@@ -56,14 +60,14 @@ export default async function LandingPage() {
         </div>
 
         <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-balance sm:text-6xl">
-          한 화면에서 즐기는
+          숲(SOOP) 멀티뷰
           <br />
-          <span className="text-primary">여러 개의 라이브</span>
+          <span className="text-primary">라이브 4개를 한 화면에</span>
         </h1>
 
         <p className="text-muted-foreground mt-5 max-w-xl text-base text-pretty sm:text-lg">
-          보고 싶은 SOOP 방송을 골라 멀티뷰에 담으세요. 최대 4분할, 자유로운
-          레이아웃, 그리고 URL 하나로 공유까지.
+          보고 싶은 숲(SOOP) 방송을 골라 멀티뷰에 담으세요. 최대 4분할, 자유로운
+          크기 조절, 모바일 지원. 로그인 없이 무료, URL 하나로 공유까지.
         </p>
 
         <div className="mt-8 flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row">
@@ -111,6 +115,16 @@ export default async function LandingPage() {
             </div>
           ))}
         </div>
+        {/* 정보형 검색("숲 멀티뷰 하는법")을 받아주는 가이드 페이지로의 내부 링크 */}
+        <p className="text-muted-foreground mt-6 text-center text-sm">
+          처음이신가요?{" "}
+          <a
+            href="/guide"
+            className="text-primary underline underline-offset-4"
+          >
+            숲 멀티뷰 사용법과 자주 묻는 질문 보기
+          </a>
+        </p>
       </section>
 
       {/* ── 지금 인기 라이브 ── */}

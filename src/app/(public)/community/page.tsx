@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SquarePen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/config/site";
 import PostList from "@/domains/community/components/post-list";
 import { listPosts } from "@/lib/supabase/queries";
 
@@ -10,11 +11,13 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "커뮤니티",
   description:
-    "SOOP 모아 커뮤니티 — 자유롭게 글을 남기고 댓글로 소통하는 공간입니다.",
+    "SOOP 모아 커뮤니티 — 숲(SOOP) 멀티뷰 이용자들이 자유롭게 글을 남기고 댓글로 소통하는 공간입니다.",
   alternates: { canonical: "/community" },
+  // 페이지 openGraph는 루트를 통째로 덮어쓰므로 type·siteName·locale을 다시 명시한다. title·description은 위 값을 자동 상속한다.
   openGraph: {
-    title: "커뮤니티 | SOOP 모아",
-    description: "자유롭게 글을 남기고 댓글로 소통하세요.",
+    type: "website",
+    siteName: siteConfig.name,
+    locale: siteConfig.locale,
     url: "/community",
   },
 };
