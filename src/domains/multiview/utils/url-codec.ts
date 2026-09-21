@@ -37,7 +37,12 @@ export function decodePanels(
     const optRaw = opts[i] ?? "";
     // 기본은 음소거 해제. 명시적으로 m1이 있을 때만 음소거(공유 URL 호환 유지).
     const muted = optRaw.includes("m1");
-    const chat = optRaw.includes("c1");
+    // 채팅은 c1/c0가 명시된 공유 URL이면 그 값을 따르고, 옵션이 없는 링크(라이브 카드의 ?v=만 있는 경우)는 기본값을 쓴다.
+    const chat = optRaw.includes("c1")
+      ? true
+      : optRaw.includes("c0")
+        ? false
+        : DEFAULT_PANEL_OPTIONS.chat;
     return { id: nanoid(6), bjId, options: { muted, chat } };
   });
 

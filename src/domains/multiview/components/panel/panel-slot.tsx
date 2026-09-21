@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import type { Panel } from "@/domains/multiview/types";
-import { cn } from "@/lib/utils";
 import { PanelControlBar } from "./panel-control-bar";
 import { PanelEmptyState } from "./panel-empty-state";
 import { PanelPlayer } from "./panel-player";
@@ -29,15 +28,11 @@ export function PanelSlot({
   const [reloadNonce, setReloadNonce] = useState(0);
 
   return (
+    // 포커스는 키보드 단축키(C·Delete)의 대상 패널을 정하는 데만 쓰고, 플레이어 위에 파란 테두리를 그리지 않는다. 상태는 data-focused로만 남긴다.
     <div
       data-focused={focused}
       onMouseDown={onFocus}
-      className={cn(
-        "group/panel ring-border relative size-full overflow-hidden rounded-lg ring-1 transition-shadow",
-        focused &&
-          panel.bjId &&
-          "ring-primary ring-2 shadow-[0_0_24px_-6px_var(--primary)]",
-      )}
+      className="group/panel ring-border relative size-full overflow-hidden rounded-lg ring-1"
     >
       {panel.bjId ? (
         <>

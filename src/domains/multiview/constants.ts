@@ -4,7 +4,8 @@ export const MIN_PANEL_SIZE = 15; // percent
 export const DEFAULT_PANEL_OPTIONS = {
   // 기본은 음소거 해제 — 음소거는 SOOP 플레이어 자체 컨트롤로 처리한다.
   muted: false,
-  chat: false,
+  // 채팅은 기본으로 표시한다. 패널 컨트롤이나 C 키로 숨길 수 있고, 선택은 URL(o=c0/c1)과 localStorage에 남는다.
+  chat: true,
 } as const;
 
 export const LS_KEY_STATE = "soop-moa:multiview:v1";
