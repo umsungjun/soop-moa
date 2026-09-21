@@ -2,13 +2,12 @@
 
 import { useSyncExternalStore } from "react";
 import { Info, X } from "lucide-react";
+import { HD_ACCESS_NOTICE_URL } from "@/domains/multiview/constants";
 
 // 크롬/엣지의 로컬 네트워크 접근 정책 변경으로 고화질 시청이 막힐 때의 안내.
 // SOOP 공지: https://sotong.sooplive.com/?board_type=servicenotice&work=view&b_no=9569
 const LS_KEY = "soop-moa:multiview:hd-notice-dismissed";
 const EVT = "soop-moa:hd-notice";
-const NOTICE_URL =
-  "https://sotong.sooplive.com/?board_type=servicenotice&work=view&b_no=9569";
 
 function subscribe(onChange: () => void) {
   window.addEventListener(EVT, onChange);
@@ -45,11 +44,12 @@ export function HdAccessNotice() {
     <div className="border-border/60 bg-muted/40 text-muted-foreground flex items-start gap-2 border-b px-3 py-2 text-xs">
       <Info className="text-primary mt-0.5 size-3.5 shrink-0" />
       <p className="flex-1 text-pretty">
-        크롬·엣지 업데이트 후 <strong className="font-medium">고화질 시청</strong>이
-        막힌다면, 브라우저에서 <code>play.sooplive.com</code>의 &ldquo;기기에 있는
-        앱(로컬 네트워크)&rdquo; 권한을 허용해 주세요.{" "}
+        크롬·엣지 업데이트 후{" "}
+        <strong className="font-medium">고화질 시청</strong>이 막힌다면,
+        브라우저에서 <code>play.sooplive.com</code>의 &ldquo;기기에 있는 앱(로컬
+        네트워크)&rdquo; 권한을 허용해 주세요.{" "}
         <a
-          href={NOTICE_URL}
+          href={HD_ACCESS_NOTICE_URL}
           target="_blank"
           rel="noreferrer noopener"
           className="text-primary underline underline-offset-2"
