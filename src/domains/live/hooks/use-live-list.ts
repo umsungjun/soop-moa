@@ -12,10 +12,14 @@ async function fetchPage(
   category: string | undefined,
   order: SortType,
   page: number,
+  signal?: AbortSignal,
 ): Promise<LiveBroadcast[]> {
   const query = new URLSearchParams({ order_type: order, page: String(page) });
   if (category) query.set("category", category);
-  const res = await fetch(`/api/soop/broad/list?${query.toString()}`);
+  // 쿼리가 취소되면(카테고리·정렬 변경 등) 진행 중인 네트워크 요청도 함께 중단한다.
+  const res = await fetch(`/api/soop/broad/list?${query.toString()}`, {
+    signal,
+  });
   const json: { list?: LiveBroadcast[] } = await res.json();
   return json.list ?? [];
 }
@@ -27,7 +31,8 @@ export function useLiveList({
   const query = useInfiniteQuery({
     queryKey: ["live-list", category ?? null, order],
     initialPageParam: 1,
-    queryFn: ({ pageParam }) => fetchPage(category, order, pageParam),
+    queryFn: ({ pageParam, signal }) =>
+      fetchPage(category, order, pageParam, signal),
     // SOOP 페이지 크기가 가변이라 "빈 페이지 = 끝"이 가장 안전한 종료 조건.
     getNextPageParam: (lastPage, allPages) =>
       lastPage.length === 0 ? undefined : allPages.length + 1,

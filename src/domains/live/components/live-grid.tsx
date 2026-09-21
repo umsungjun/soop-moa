@@ -10,6 +10,8 @@ interface LiveGridProps {
   isLoading: boolean;
   /** 다음 페이지를 불러오는 중이면 하단에 스켈레톤 행을 덧붙인다. */
   isFetchingNextPage?: boolean;
+  /** 결과가 없을 때 보여줄 문구. 검색 모드에서 "찾는 중"·"해당 없음"을 구분해 넘긴다. */
+  emptyMessage?: string;
   /** 사이드바·다이얼로그 등 좁은 곳에선 모바일에서도 2열로 촘촘하게 채운다. */
   dense?: boolean;
   onSelect?: (broadcast: LiveBroadcast) => void;
@@ -37,6 +39,7 @@ export function LiveGrid({
   broadcasts,
   isLoading,
   isFetchingNextPage,
+  emptyMessage = "표시할 라이브 방송이 없습니다.",
   dense,
   onSelect,
 }: LiveGridProps) {
@@ -58,7 +61,7 @@ export function LiveGrid({
     return (
       <div className="text-muted-foreground flex flex-col items-center justify-center gap-3 py-24 text-center">
         <Radio className="size-10 opacity-50" />
-        <p className="text-sm">표시할 라이브 방송이 없습니다.</p>
+        <p className="text-sm">{emptyMessage}</p>
       </div>
     );
   }
