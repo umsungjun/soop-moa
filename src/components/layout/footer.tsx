@@ -1,4 +1,4 @@
-import { Mail } from "lucide-react";
+import { BookOpen, Mail } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 // lucide v1은 브랜드 아이콘을 제공하지 않아 GitHub 마크는 인라인 SVG로 둔다.
@@ -24,6 +24,13 @@ export function Footer() {
           프로젝트입니다.
         </p>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <a
+            href="/guide"
+            className="hover:text-foreground inline-flex items-center gap-1.5 underline-offset-2 hover:underline"
+          >
+            <BookOpen className="size-3.5" />
+            사용 가이드
+          </a>
           <a
             href={`mailto:${siteConfig.links.email}`}
             className="hover:text-foreground inline-flex items-center gap-1.5 underline-offset-2 hover:underline"
