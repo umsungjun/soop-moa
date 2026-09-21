@@ -7,6 +7,8 @@ import { QueryProvider } from "@/components/providers/query-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
+import { JsonLd } from "@/lib/seo/json-ld";
+import { SCHEMA_IDS } from "@/lib/seo/schema";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,10 +35,8 @@ export const metadata: Metadata = {
   category: "entertainment",
   // 전화/이메일/주소 자동 링크 비활성화 — 본문에 해당 정보가 없고, UA 스캔 방지.
   formatDetection: { telephone: false, address: false, email: false },
-  // 루트 문서의 canonical. 페이지별 메타데이터가 이를 덮어쓴다.
-  alternates: {
-    canonical: "/",
-  },
+  // canonical은 루트에 두지 않는다. 최상위 키 단위로 얕게 병합되어 alternates를 선언하지 않은 모든 페이지(noindex인 /me·/community/write 포함)가 "/"를 canonical로 상속하기 때문이다.
+  // 색인 대상 페이지는 각자 alternates.canonical을 선언한다.
   openGraph: {
     type: "website",
     locale: siteConfig.locale,
@@ -55,11 +55,9 @@ export const metadata: Metadata = {
       },
     ],
   },
+  // 카드 타입만 지정한다. title·description·images를 여기서 고정하면 모든 하위 페이지가 사이트 공통 제목을 twitter:title로 내보내므로, Next의 페이지별 자동 채움(openGraph → twitter)에 맡긴다.
   twitter: {
     card: "summary_large_image",
-    title: siteConfig.title,
-    description: siteConfig.description,
-    images: ["/opengraph-image.png"],
   },
   // 세분화된 크롤러 지시문 — Google이 더 풍부한 스니펫을 노출하도록 허용.
   robots: {
@@ -102,16 +100,18 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "WebSite",
-      "@id": `${siteConfig.url}/#website`,
+      "@id": SCHEMA_IDS.website,
       url: siteConfig.url,
       name: siteConfig.name,
+      // 브랜드 검색어 변형("숲모아")을 같은 엔티티로 묶는다.
+      alternateName: ["숲 모아", "숲모아", "soopmoa"],
       description: siteConfig.description,
       inLanguage: "ko-KR",
-      publisher: { "@id": `${siteConfig.url}/#publisher` },
+      publisher: { "@id": SCHEMA_IDS.publisher },
     },
     {
       "@type": "WebApplication",
-      "@id": `${siteConfig.url}/#app`,
+      "@id": SCHEMA_IDS.app,
       name: siteConfig.name,
       url: siteConfig.url,
       description: siteConfig.description,
@@ -127,7 +127,7 @@ const jsonLd = {
     },
     {
       "@type": "Organization",
-      "@id": `${siteConfig.url}/#publisher`,
+      "@id": SCHEMA_IDS.publisher,
       name: siteConfig.name,
       url: siteConfig.url,
     },
@@ -155,10 +155,7 @@ export default function RootLayout({
         {/* 개발 환경에서만 렌더 */}
         {process.env.NODE_ENV !== "production" && <DevAnnotations />}
         <Clarity />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <JsonLd data={jsonLd} />
       </body>
     </html>
   );
