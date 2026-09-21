@@ -25,7 +25,8 @@ export function UserMenu() {
   }
 
   if (!isAuthenticated || !user) {
-    return <LoginButton size="sm" />;
+    // 모바일(390px)에서 헤더가 화면보다 넓어지지 않도록 라벨을 숨긴다.
+    return <LoginButton size="sm" compact />;
   }
 
   return (
