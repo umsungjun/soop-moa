@@ -1,4 +1,5 @@
 import { SOOP_PLAY_BASE } from "@/lib/soop/endpoints";
+import { DEFAULT_PANEL_OPTIONS } from "../constants";
 
 interface EmbedParams {
   bjId: string;
@@ -14,8 +15,8 @@ interface EmbedParams {
 export function buildEmbedSrc({
   bjId,
   autoPlay = true,
-  muted = false,
-  chat = false,
+  muted = DEFAULT_PANEL_OPTIONS.muted,
+  chat = DEFAULT_PANEL_OPTIONS.chat,
 }: EmbedParams): string {
   const query = new URLSearchParams({
     autoPlay: String(autoPlay),

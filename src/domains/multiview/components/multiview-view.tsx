@@ -109,7 +109,7 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
     (panel: PanelData) => (
       <PanelSlot
         panel={panel}
-        // 모바일 세로 스택은 한 번에 한 화면씩 보므로 포커스 링(파란 테두리)을 띄우지 않는다.
+        // 포커스는 키보드 단축키(C·Delete)의 대상 패널을 정하는 상태일 뿐 테두리는 그리지 않는다. 모바일 세로 스택은 포커스 개념을 쓰지 않는다.
         focused={!isMobile && state?.focusedId === panel.id}
         canRemove={(state?.panels.length ?? 1) > 1}
         onFocus={() => actions.setFocus(panel.id)}
