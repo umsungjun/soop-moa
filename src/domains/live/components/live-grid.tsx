@@ -1,6 +1,6 @@
 "use client";
 
-import { Radio } from "lucide-react";
+import Icon3D from "@/components/ui/icon-3d";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { LiveBroadcast } from "@/domains/live/types";
 import { LiveCard } from "./live-card";
@@ -60,7 +60,7 @@ export function LiveGrid({
   if (broadcasts.length === 0) {
     return (
       <div className="text-muted-foreground flex flex-col items-center justify-center gap-3 py-24 text-center">
-        <Radio className="size-10 opacity-50" />
+        <Icon3D name="antenna" size={56} className="opacity-90" />
         <p className="text-sm">{emptyMessage}</p>
       </div>
     );

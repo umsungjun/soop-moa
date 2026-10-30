@@ -67,9 +67,9 @@ export function PanelControlBar({
   // 컨트롤 접기 상태 — SOOP 플레이어를 가리지 않도록 작은 핸들로 접을 수 있다.
   const [collapsed, setCollapsed] = useState(false);
 
-  // 모바일에선 항상 표시, 데스크톱에선 hover/focus 시에만 노출하는 공통 클래스.
+  // 마우스가 있으면 hover/focus 때만, 터치 기기는 항상 표시한다. 폭(md) 기준이면 hover가 없는 768px 이상 태블릿에서 컨트롤이 보이지 않는다.
   const reveal =
-    "opacity-100 transition-opacity duration-200 md:opacity-0 md:group-hover/panel:opacity-100 md:group-focus-within/panel:opacity-100";
+    "opacity-100 transition-opacity duration-200 pointer-fine:opacity-0 pointer-fine:group-hover/panel:opacity-100 pointer-fine:group-focus-within/panel:opacity-100";
 
   return (
     // 컨트롤 클러스터 — 상단 중앙 pill. SOOP 자체 컨트롤(주로 우상단)과 분리된다.

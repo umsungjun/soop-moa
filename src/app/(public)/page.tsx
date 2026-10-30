@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { ArrowRight, LayoutGrid, Radio, Share2, Sparkles } from "lucide-react";
+import { ArrowRight, Radio, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Icon3D, { type Icon3DName } from "@/components/ui/icon-3d";
 import { LiveCard } from "@/domains/live/components/live-card";
 import type { LiveBroadcast } from "@/domains/live/types";
 import { getBroadList } from "@/lib/soop/client";
@@ -13,19 +14,19 @@ export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 const LIVE_COUNT = 9;
 
-const STEPS = [
+const STEPS: { icon: Icon3DName; title: string; desc: string }[] = [
   {
-    icon: Radio,
+    icon: "tv",
     title: "라이브 둘러보기",
     desc: "실시간 방송 목록에서 보고 싶은 방송을 찾으세요.",
   },
   {
-    icon: LayoutGrid,
+    icon: "desktop",
     title: "멀티뷰에 담기",
     desc: "클릭 한 번으로 최대 4개 방송을 한 화면에. PC는 4분할·메인 크게 보기 등 배치를 고르고, 모바일은 세로 스택.",
   },
   {
-    icon: Share2,
+    icon: "link",
     title: "링크로 공유",
     desc: "지금 보고 있는 구성과 배치를 URL 하나로 친구에게 전달.",
   },
@@ -106,9 +107,7 @@ export default async function LandingPage() {
               <span className="text-primary/15 pointer-events-none absolute top-2 right-4 text-6xl font-bold tabular-nums select-none">
                 {i + 1}
               </span>
-              <div className="bg-primary/10 text-primary mb-4 flex size-10 items-center justify-center rounded-xl">
-                <s.icon className="size-5" />
-              </div>
+              <Icon3D name={s.icon} size={48} className="mb-4" />
               <h3 className="font-semibold">{s.title}</h3>
               <p className="text-muted-foreground mt-1.5 text-sm text-pretty">
                 {s.desc}
@@ -160,7 +159,7 @@ export default async function LandingPage() {
           </div>
         ) : (
           <div className="border-border text-muted-foreground flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed py-20 text-center">
-            <Radio className="size-10 opacity-50" />
+            <Icon3D name="antenna" size={56} className="opacity-90" />
             <p className="text-sm">지금은 표시할 라이브 방송이 없어요.</p>
           </div>
         )}
