@@ -25,4 +25,4 @@ Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · shadcn/u
 
 ---
 
-피드백과 문의사항은 커뮤니티 또는 이메일(umseongjun@naver.com)로 언제든지 보내주세요. 감사합니다.
+피드백과 문의사항은 사이트의 채팅 문의, 커뮤니티 또는 이메일(umseongjun@naver.com)로 언제든지 보내주세요. 감사합니다.
