@@ -29,6 +29,10 @@ export const reactionSchema = z.object({
   value: z.enum(["like", "dislike"]),
 });
 
+export const markNotificationsReadSchema = z.object({
+  ids: z.array(z.uuid()).max(50).optional(),
+});
+
 export const listQuerySchema = z.object({
   cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(50).default(20),

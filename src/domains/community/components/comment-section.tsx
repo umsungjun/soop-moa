@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { LoginButton } from "@/domains/auth/components/login-button";
 import { useSession } from "@/domains/auth/hooks/use-session";
 import { useComments } from "../hooks/use-comments";
@@ -20,6 +21,23 @@ export default function CommentSection({ postId }: CommentSectionProps) {
   const totalCount = comments.reduce((n, c) => n + 1 + c.replies.length, 0);
   // SOOP user_id 보강 실패(기본 이미지 등) 시 작성 불가 — 폼 대신 안내.
   const canWrite = isAuthenticated && !!user?.userId;
+
+  // 알림의 #comment-{id} 링크로 들어오면 댓글이 그려진 뒤에 그 댓글로 스크롤하고 잠깐 강조한다. 댓글은 클라이언트에서 늦게 그려져 브라우저 기본 앵커 이동이 대상을 찾지 못한다.
+  useEffect(() => {
+    if (isLoading) return;
+    const focusHashTarget = () => {
+      const id = window.location.hash.slice(1);
+      if (!id.startsWith("comment-")) return;
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.classList.add("bg-primary/10");
+      window.setTimeout(() => el.classList.remove("bg-primary/10"), 2000);
+    };
+    focusHashTarget();
+    window.addEventListener("hashchange", focusHashTarget);
+    return () => window.removeEventListener("hashchange", focusHashTarget);
+  }, [isLoading]);
 
   return (
     <section className="mt-10">

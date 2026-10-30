@@ -50,6 +50,8 @@ Feature code lives under `src/domains/{auth,community,live,multiview}`, each sel
 - **첫 영속 저장소** — Supabase Postgres. `src/lib/supabase/client.ts`가 **service_role 키를 쥔 유일한 서버 전용(`import "server-only"`) 클라이언트**이고, 데이터 접근은 `src/lib/supabase/queries.ts`에 모은다. UI는 Supabase를 직접 호출하지 않고 `src/app/api/community/*` 라우트 핸들러를 거친다(SOOP API와 동일한 경계 패턴).
 - **인증/권한** — 앱은 iron-session으로 인증하고 Supabase Auth는 쓰지 않는다. 라우트 핸들러가 `getSession()` + `isAuthenticated()`로 로그인·소유권을 강제한다(작성자 키 = `session.user.userId` = SOOP BJ id). service_role는 RLS를 우회하며, 모든 테이블은 **RLS 활성 + 정책 0개**로 잠가 anon 키를 무력화한다.
 - **테이블** (`supabase/migrations/0001_community.sql`을 Supabase SQL 에디터에서 실행): `profiles`(작성자, 쓰기 시 upsert), `posts`(좋아요/싫어요/댓글 카운트는 트리거로 동기화), `comments`(self-FK `parent_id` + 트리거로 1단계 대댓글 제한), `reactions`(다형성 `target_type`/`target_id`, 사용자당 1표 unique·토글).
+- **알림** (`supabase/migrations/0002_notifications.sql`, 0001 다음에 실행): `notifications` 테이블은 comments INSERT 트리거가 채운다. 내 글에 댓글 → `comment`, 내 댓글에 답글 → `reply`, 원댓글 작성자가 곧 글쓴이면 `reply` 하나만, 자기 글·댓글엔 알리지 않음. 댓글·글을 soft delete하면 트리거가 그 알림도 지운다. 앱은 `GET/PATCH /api/community/notifications`로 읽기·읽음 처리만 한다.
+- 헤더 종(`domains/community/components/notification-bell.tsx`)은 SOOP id가 식별된 로그인 사용자에게만 보이고, Realtime 대신 SWR 60초 폴링 + 탭 복귀 갱신을 쓴다. 알림 링크는 `/community/{postId}#comment-{commentId}`이며, 댓글이 클라이언트에서 늦게 그려지므로 `comment-section.tsx`가 로드 후 해당 댓글로 스크롤·강조한다.
 - **무료 티어 주의** — 7일 미활동 시 프로젝트 자동 일시정지. `vercel.json` Cron이 매일 `/api/community/heartbeat`(`CRON_SECRET` 보호)를 호출해 회피한다.
 - 데이터 페칭: 목록은 TanStack Query 무한스크롤(keyset 커서, 서버에서 첫 페이지 프리페치), 상세 댓글·세션은 SWR. 새 UI 프리미티브 `src/components/ui/textarea.tsx` 추가.
 

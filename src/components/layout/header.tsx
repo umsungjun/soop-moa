@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookOpen, LayoutGrid, MessagesSquare, Radio } from "lucide-react";
 import { UserMenu } from "@/domains/auth/components/user-menu";
+import NotificationBell from "@/domains/community/components/notification-bell";
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
@@ -34,8 +35,8 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  // 모바일은 아이콘만 보이므로 좌우 여백을 줄여 4개 항목이 360px 폭에도 들어가게 한다.
-                  "flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium transition-colors sm:px-3",
+                  // 모바일은 아이콘만 보이므로 좌우 여백을 줄여 로그인 상태(테마·알림·아바타)에서도 360px 폭에 들어가게 한다.
+                  "flex items-center gap-1.5 rounded-lg px-1.5 py-1.5 text-sm font-medium transition-colors sm:px-3",
                   active
                     ? "bg-secondary text-secondary-foreground"
                     : "text-muted-foreground hover:text-foreground",
@@ -49,7 +50,9 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-1.5 sm:gap-3">
-          <ThemeToggle />
+          {/* 360px 미만은 알림 종까지 넣으면 넘쳐 테마 토글을 숨긴다. 테마는 시스템 설정(기본 다크)을 따른다. */}
+          <ThemeToggle className="max-[359px]:hidden" />
+          <NotificationBell />
           <UserMenu />
         </div>
       </div>

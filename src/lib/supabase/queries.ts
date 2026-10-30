@@ -4,6 +4,7 @@ import { SupabaseDataError } from "./errors";
 import { decodeCursor, encodeCursor } from "./pagination";
 import type {
   CommunityComment,
+  CommunityNotification,
   CommunityPost,
   CommunityPostSummary,
   PostListPage,
@@ -414,6 +415,84 @@ export const setReaction = async (input: {
     likeCount: counts.like_count as number,
     dislikeCount: counts.dislike_count as number,
   };
+};
+
+// ── 알림 ─────────────────────────────────────────────────────────────────────
+// 생성은 comments INSERT 트리거(0002_notifications.sql)가 맡고, 여기서는 읽기·읽음 처리만 한다.
+interface RawNotificationRow {
+  id: string;
+  type: CommunityNotification["type"];
+  post_id: string;
+  comment_id: string;
+  actor_id: string;
+  actor_nick: string;
+  actor_profile_image: string | null;
+  preview: string;
+  read_at: string | null;
+  created_at: string;
+}
+
+const normalizeNotification = (
+  r: RawNotificationRow,
+): CommunityNotification => ({
+  id: r.id,
+  type: r.type,
+  postId: r.post_id,
+  commentId: r.comment_id,
+  actor: {
+    userId: r.actor_id,
+    nick: r.actor_nick,
+    profileImage: r.actor_profile_image,
+  },
+  preview: r.preview,
+  createdAt: r.created_at,
+  isRead: r.read_at != null,
+});
+
+export const listNotifications = async (
+  userId: string,
+  limit = 20,
+): Promise<{ list: CommunityNotification[]; unreadCount: number }> => {
+  const admin = getSupabaseAdmin();
+  const [rows, unread] = await Promise.all([
+    admin
+      .from("notifications")
+      .select(
+        "id,type,post_id,comment_id,actor_id,actor_nick,actor_profile_image,preview,read_at,created_at",
+      )
+      .eq("recipient_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(limit),
+    // 배지 숫자는 목록 개수(limit)와 무관하게 전체 안 읽은 수를 센다.
+    admin
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("recipient_id", userId)
+      .is("read_at", null),
+  ]);
+  if (rows.error) throw mapPgError(rows.error);
+  if (unread.error) throw mapPgError(unread.error);
+  return {
+    list: ((rows.data ?? []) as RawNotificationRow[]).map(
+      normalizeNotification,
+    ),
+    unreadCount: unread.count ?? 0,
+  };
+};
+
+/** ids가 없으면 전부 읽음 처리. 수신자 조건을 함께 걸어 남의 알림은 건드리지 못한다. */
+export const markNotificationsRead = async (
+  userId: string,
+  ids?: string[],
+): Promise<void> => {
+  let query = getSupabaseAdmin()
+    .from("notifications")
+    .update({ read_at: new Date().toISOString() })
+    .eq("recipient_id", userId)
+    .is("read_at", null);
+  if (ids?.length) query = query.in("id", ids);
+  const { error } = await query;
+  if (error) throw mapPgError(error);
 };
 
 // ── heartbeat (무료 티어 자동 일시정지 회피) ─────────────────────────────────

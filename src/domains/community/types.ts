@@ -2,15 +2,19 @@
 // 여기서는 API 응답 래퍼 계약만 추가로 정의한다.
 import type {
   CommunityComment,
+  CommunityNotification,
   CommunityPost,
   CommunityPostSummary,
+  NotificationType,
   ReactionValue,
 } from "@/lib/supabase/types";
 
 export type {
   CommunityComment,
+  CommunityNotification,
   CommunityPost,
   CommunityPostSummary,
+  NotificationType,
   ReactionValue,
 };
 
@@ -35,4 +39,9 @@ export interface ReactionResponse {
   myReaction: ReactionValue | null;
   likeCount: number;
   dislikeCount: number;
+}
+
+export interface NotificationListResponse {
+  list: CommunityNotification[];
+  unreadCount: number;
 }

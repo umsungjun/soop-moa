@@ -4,10 +4,11 @@ import { useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const noopSubscribe = () => () => {};
 
-export function ThemeToggle() {
+export function ThemeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
   // 서버에선 false, 클라이언트에선 true. 테마는 클라이언트에서만 알 수 있어 그 전엔 기본 아이콘을 그린다.
   const mounted = useSyncExternalStore(
@@ -22,6 +23,7 @@ export function ThemeToggle() {
     <Button
       variant="ghost"
       size="icon-lg"
+      className={cn("size-8 sm:size-9", className)}
       aria-label="테마 전환"
       onClick={() => setTheme(isDark ? "light" : "dark")}
     >
