@@ -29,7 +29,7 @@ import { breadcrumbList, faqPage } from "@/lib/seo/schema";
 export const metadata: Metadata = {
   title: "숲(SOOP) 멀티뷰 하는법 · PC·모바일 가이드",
   description:
-    "숲(SOOP) 멀티뷰 사용법을 3단계로 정리했습니다. PC 4분할 크기 조절, 모바일 세로 스택 시청, URL 공유, 고화질(HD) 시청 문제 해결, 자주 묻는 질문까지.",
+    "숲(SOOP) 멀티뷰 사용법을 3단계로 정리했습니다. PC 4분할·메인 크게 보기 배치와 크기 조절, 모바일 세로 스택 시청, URL 공유, 고화질(HD) 시청 문제 해결, 자주 묻는 질문까지.",
   keywords: [
     "숲 멀티뷰 하는법",
     "숲 모바일 멀티뷰",
@@ -126,10 +126,21 @@ export default function GuidePage() {
               분할, 3개는 위 2개·아래 1개, 4개는 2×2 4분할이에요.
             </li>
             <li>
+              툴바의 배치 버튼(또는 L 키)으로 모양을 바꿀 수 있어요. 2개는 상하
+              분할, 3·4개는 메인 화면을 크게 두는 {"“메인 위”·“메인 왼쪽”"}과 한
+              줄로 늘어놓는 &ldquo;가로 나열&rdquo;을 고를 수 있습니다. 고른
+              배치는 방송을 더하거나 빼도 유지돼요.
+            </li>
+            <li>
+              메인 배치에서는 작은 패널 컨트롤의 &ldquo;메인 화면으로&rdquo;
+              버튼(또는 M 키)으로 그 방송을 큰 칸에 올립니다. 자리만 바뀌고
+              방송은 끊기지 않아요.
+            </li>
+            <li>
               패널 사이 경계선을 드래그하면 비율이 바뀝니다. 각 칸은 최소{" "}
-              {MIN_PANEL_SIZE}%까지 줄일 수 있고, 툴바의 &ldquo;레이아웃
-              초기화&rdquo;로 기본 비율로 되돌립니다. 패널 수가 바뀌면 비율은
-              자동으로 초기화됩니다.
+              {MIN_PANEL_SIZE}%까지 줄일 수 있고, 툴바의 &ldquo;비율
+              초기화&rdquo;로 기본 비율로 되돌립니다. 패널 수나 배치가 바뀌면
+              비율은 자동으로 초기화됩니다.
             </li>
             <li>
               패널에 마우스를 올리면 상단 중앙에 컨트롤이 나타납니다. 채팅
@@ -193,7 +204,11 @@ export default function GuidePage() {
             <code className="bg-muted rounded px-1 py-0.5 font-mono text-xs">
               o=
             </code>{" "}
-            에 채팅 표시 여부가 담겨 링크를 연 사람도 같은 구성을 봅니다. 구성은
+            에 채팅 표시 여부,{" "}
+            <code className="bg-muted rounded px-1 py-0.5 font-mono text-xs">
+              l=
+            </code>{" "}
+            에 배치가 담겨 링크를 연 사람도 같은 구성을 봅니다. 구성은
             브라우저에도 자동 저장되어 새로고침하거나 다음에 방문해도
             복원됩니다.
           </p>

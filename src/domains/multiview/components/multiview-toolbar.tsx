@@ -11,12 +11,16 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { MAX_PANELS } from "@/domains/multiview/constants";
+import type { LayoutId } from "@/domains/multiview/types";
+import LayoutPicker from "./layout-picker";
 
 interface MultiviewToolbarProps {
   panelCount: number;
   filledCount: number;
+  layout: LayoutId;
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
+  onLayoutChange: (layout: LayoutId) => void;
   onResetLayout: () => void;
   onAddPanel: () => void;
 }
@@ -24,8 +28,10 @@ interface MultiviewToolbarProps {
 export function MultiviewToolbar({
   panelCount,
   filledCount,
+  layout,
   sidebarOpen,
   onToggleSidebar,
+  onLayoutChange,
   onResetLayout,
   onAddPanel,
 }: MultiviewToolbarProps) {
@@ -64,14 +70,22 @@ export function MultiviewToolbar({
 
       <Separator orientation="vertical" className="mx-1 h-5" />
 
+      <LayoutPicker
+        count={panelCount}
+        value={layout}
+        onChange={onLayoutChange}
+      />
+
+      {/* 배치는 그대로 두고 드래그한 비율만 기본값으로 되돌린다. */}
       <Button
         variant="ghost"
         size="sm"
         className="gap-1.5"
         onClick={onResetLayout}
+        aria-label="비율 초기화"
       >
         <RotateCcw />
-        <span className="hidden sm:inline">레이아웃 초기화</span>
+        <span className="hidden sm:inline">비율 초기화</span>
       </Button>
 
       <div className="ml-auto flex items-center gap-1.5">
@@ -80,6 +94,7 @@ export function MultiviewToolbar({
           size="sm"
           className="gap-1.5"
           onClick={handleShare}
+          aria-label="공유 링크 복사"
         >
           <Link2 />
           <span className="hidden sm:inline">공유</span>

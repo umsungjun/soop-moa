@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { DEFAULT_PANEL_OPTIONS, MAX_PANELS } from "../constants";
-import type { Panel } from "../types";
+import type { LayoutId, Panel } from "../types";
+import { DEFAULT_LAYOUT, isLayoutId } from "./layouts";
 import { isValidBjId } from "./validate-bj-id";
 
 const EMPTY = "_";
@@ -48,3 +49,10 @@ export function decodePanels(
 
   return panels.length > 0 ? panels : null;
 }
+
+/** 배치는 l 파라미터에 담는다. 기본(grid)은 생략해 기존 공유 링크와 같은 주소를 유지한다. */
+export const encodeLayout = (layout: LayoutId): string | null =>
+  layout === DEFAULT_LAYOUT ? null : layout;
+
+export const decodeLayout = (raw: string | null): LayoutId =>
+  isLayoutId(raw) ? raw : DEFAULT_LAYOUT;

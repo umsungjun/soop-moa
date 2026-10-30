@@ -38,8 +38,8 @@ export function PanelPlayer({ bjId, options, reloadNonce }: PanelPlayerProps) {
         src={src}
         title={`SOOP live - ${bjId}`}
         className="size-full border-0"
+        // fullscreen은 allow에 있다. allowFullScreen을 같이 두면 크롬이 중복 경고를 낸다.
         allow="autoplay; encrypted-media; picture-in-picture; fullscreen; local-network-access"
-        allowFullScreen
         referrerPolicy="strict-origin-when-cross-origin"
         onError={() => setFailed(true)}
       />

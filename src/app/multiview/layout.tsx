@@ -7,7 +7,7 @@ import { siteConfig } from "@/config/site";
 export const metadata: Metadata = {
   title: "숲(SOOP) 멀티뷰 4분할 · 라이브 4개 동시 시청",
   description:
-    "숲(SOOP) 라이브 최대 4개를 한 화면에서 동시 시청. 로그인 없이 무료, 마우스로 분할 크기 조절, 모바일은 세로 스택으로 시청, URL 한 줄로 멀티뷰 구성 공유.",
+    "숲(SOOP) 라이브 최대 4개를 한 화면에서 동시 시청. 로그인 없이 무료, 4분할·메인 크게 보기 배치와 분할 크기 조절, 모바일은 세로 스택으로 시청, URL 한 줄로 멀티뷰 구성 공유.",
   keywords: [
     "숲 멀티뷰",
     "숲 멀티뷰 4개",
@@ -44,8 +44,8 @@ export default function MultiviewLayout({
       </h1>
       <p className="sr-only">
         보고 싶은 SOOP 방송을 최대 4개까지 골라 한 화면에서 동시에 시청합니다.
-        로그인 없이 무료로 이용할 수 있고, PC에서는 마우스로 분할 크기를
-        조절하며 모바일에서는 세로로 쌓아 봅니다.
+        로그인 없이 무료로 이용할 수 있고, PC에서는 4분할이나 메인 화면을 크게
+        두는 배치를 고르고 분할 크기를 조절하며 모바일에서는 세로로 쌓아 봅니다.
       </p>
       {children}
     </div>

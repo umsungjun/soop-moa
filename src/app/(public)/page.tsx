@@ -22,12 +22,12 @@ const STEPS = [
   {
     icon: LayoutGrid,
     title: "멀티뷰에 담기",
-    desc: "클릭 한 번으로 최대 4개 방송을 한 화면에. PC는 4분할, 모바일은 세로 스택.",
+    desc: "클릭 한 번으로 최대 4개 방송을 한 화면에. PC는 4분할·메인 크게 보기 등 배치를 고르고, 모바일은 세로 스택.",
   },
   {
     icon: Share2,
     title: "링크로 공유",
-    desc: "지금 보고 있는 구성을 URL 하나로 친구에게 전달.",
+    desc: "지금 보고 있는 구성과 배치를 URL 하나로 친구에게 전달.",
   },
 ];
 
@@ -66,8 +66,9 @@ export default async function LandingPage() {
         </h1>
 
         <p className="text-muted-foreground mt-5 max-w-xl text-base text-pretty sm:text-lg">
-          보고 싶은 숲(SOOP) 방송을 골라 멀티뷰에 담으세요. 최대 4분할, 자유로운
-          크기 조절, 모바일 지원. 로그인 없이 무료, URL 하나로 공유까지.
+          보고 싶은 숲(SOOP) 방송을 골라 멀티뷰에 담으세요. 최대 4분할, 메인
+          화면 크게 보기, 자유로운 크기 조절, 모바일 지원. 로그인 없이 무료, URL
+          하나로 공유까지.
         </p>
 
         <div className="mt-8 flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row">
