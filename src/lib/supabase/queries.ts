@@ -480,17 +480,19 @@ export const listNotifications = async (
   };
 };
 
-/** ids가 없으면 전부 읽음 처리. 수신자 조건을 함께 걸어 남의 알림은 건드리지 못한다. */
+/** ids를 생략하면 전부 읽음 처리. 수신자 조건을 함께 걸어 남의 알림은 건드리지 못한다. */
 export const markNotificationsRead = async (
   userId: string,
   ids?: string[],
 ): Promise<void> => {
+  // 빈 배열은 "읽을 것 없음"이다. 길이로 분기하면 전체 읽음으로 새므로 생략(undefined)만 전체로 본다.
+  if (ids && ids.length === 0) return;
   let query = getSupabaseAdmin()
     .from("notifications")
     .update({ read_at: new Date().toISOString() })
     .eq("recipient_id", userId)
     .is("read_at", null);
-  if (ids?.length) query = query.in("id", ids);
+  if (ids) query = query.in("id", ids);
   const { error } = await query;
   if (error) throw mapPgError(error);
 };
