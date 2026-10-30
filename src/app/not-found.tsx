@@ -10,6 +10,7 @@ import {
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
+import Icon3D from "@/components/ui/icon-3d";
 
 // 404 응답에는 Next가 noindex 메타를 자동 삽입하지만, 루트의 robots(index, follow)가 함께 상속되어 상충하는 태그가 나오므로 여기서 덮어쓴다.
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function NotFound() {
       <Header />
       <main className="flex flex-1 items-center justify-center px-4 py-24 sm:px-6">
         <div className="max-w-md text-center">
+          <Icon3D name="compass" size={72} className="mx-auto mb-5" />
           <p className="text-primary text-sm font-semibold tabular-nums">404</p>
           <h1 className="mt-2 text-3xl font-bold tracking-tight">
             페이지를 찾을 수 없어요

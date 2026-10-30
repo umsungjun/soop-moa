@@ -139,6 +139,13 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "cv09", "ss01";
+    /* 브라우저 기본값은 한글을 음절 단위로 끊어 "모바일/은"처럼 갈라진다. 공백 없는 긴 URL은 overflow-wrap이 받아 준다. */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+  code,
+  pre {
+    word-break: break-all;
   }
   html {
     @apply font-sans;

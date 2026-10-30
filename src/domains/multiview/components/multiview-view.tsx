@@ -27,7 +27,10 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
   const [isResizing, setIsResizing] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [targetPanelId, setTargetPanelId] = useState<string | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  // 1280px 미만에서 320px 사이드바를 기본으로 열면 768px 태블릿의 그리드가 432px로 줄어 작은 패널이 139px까지 좁아진다. 사용자가 토글하면 그 선택을 따른다.
+  const isWide = useMediaQuery("(min-width: 1280px)");
+  const [sidebarPref, setSidebarPref] = useState<boolean | null>(null);
+  const sidebarOpen = sidebarPref ?? isWide;
 
   const openAddForPanel = useCallback((panelId: string) => {
     setTargetPanelId(panelId);
@@ -174,7 +177,7 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
         filledCount={filledCount}
         layout={state.layout}
         sidebarOpen={sidebarOpen}
-        onToggleSidebar={() => setSidebarOpen((o) => !o)}
+        onToggleSidebar={() => setSidebarPref(!sidebarOpen)}
         onLayoutChange={actions.setLayout}
         onResetLayout={actions.reset}
         onAddPanel={openAddNew}
@@ -187,7 +190,7 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
         {!isMobile && sidebarOpen ? (
           <LiveSidebar
             onPick={handleSidebarPick}
-            onClose={() => setSidebarOpen(false)}
+            onClose={() => setSidebarPref(false)}
             renderLiveList={renderLiveList}
           />
         ) : null}

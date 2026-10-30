@@ -68,6 +68,8 @@ Feature code lives under `src/domains/{auth,community,live,multiview}`, each sel
 - Components are **shadcn** (`style: base-nova`) generated on top of **Base UI** (`@base-ui/react`) headless primitives in `src/components/ui/`. Base UI uses a polymorphic `render` prop; when a `Button` renders a non-`<button>` element (e.g. a navigation link), pass `nativeButton={false}` (Base UI defaults it to `true`, which warns otherwise).
 - **Tailwind v4** — there is no `tailwind.config`. Theme tokens (the cool-blue "Cinema Grid" design system, light + dark) live in `@theme` / `:root` blocks in `src/app/globals.css`.
 - Toasts via `sonner`, theming via `next-themes`, icons via `lucide-react`.
+- **3D 아이콘**: `components/ui/icon-3d.tsx`(Microsoft Fluent Emoji 3D, MIT, `public/icons/3d/*.webp` 128px). 32px 이상의 장식 자리(랜딩 단계 카드·가이드 절 제목·빈 상태·404)에만 쓰고 버튼·툴바는 lucide를 유지한다. 새 아이콘은 원본 PNG를 같은 규격 WebP로 줄여 넣고 `Icon3DName`에 이름을 더한다.
+- 한글 줄바꿈: `body`에 `word-break: keep-all` + `overflow-wrap: break-word`가 걸려 있다(`globals.css`).
 
 ### Security headers
 

@@ -20,7 +20,8 @@ export function Header() {
 
   return (
     <header className="bg-background/70 border-border/60 sticky top-0 z-40 border-b backdrop-blur-xl">
-      <div className="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6">
+      {/* 320px 폭에서 로그인 버튼이 24px 넘쳐 가로 스크롤이 생겨 모바일 간격을 줄인다. */}
+      <div className="mx-auto flex h-14 max-w-7xl items-center gap-2 px-3 sm:gap-4 sm:px-6">
         <Link href="/" className="shrink-0">
           <Logo />
         </Link>
@@ -47,7 +48,7 @@ export function Header() {
           })}
         </nav>
 
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-1.5 sm:gap-3">
           <ThemeToggle />
           <UserMenu />
         </div>

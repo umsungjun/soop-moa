@@ -1,14 +1,7 @@
 import type { Metadata } from "next";
-import {
-  ArrowRight,
-  Info,
-  Keyboard,
-  Link2,
-  MessagesSquare,
-  Monitor,
-  Smartphone,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Icon3D, { type Icon3DName } from "@/components/ui/icon-3d";
 import { siteConfig } from "@/config/site";
 import { FaqList } from "@/domains/guide/components/faq-list";
 import {
@@ -48,17 +41,15 @@ export const metadata: Metadata = {
 };
 
 function SectionTitle({
-  icon: Icon,
+  icon,
   children,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: Icon3DName;
   children: React.ReactNode;
 }) {
   return (
-    <h2 className="flex items-center gap-2.5 text-xl font-bold tracking-tight sm:text-2xl">
-      <span className="bg-primary/10 text-primary flex size-8 shrink-0 items-center justify-center rounded-lg">
-        <Icon className="size-4" />
-      </span>
+    <h2 className="flex items-center gap-3 text-xl font-bold tracking-tight sm:text-2xl">
+      <Icon3D name={icon} size={36} />
       {children}
     </h2>
   );
@@ -94,7 +85,7 @@ export default function GuidePage() {
       <div className="space-y-12">
         {/* ── 3단계 ── */}
         <section aria-labelledby="guide-steps">
-          <SectionTitle icon={Monitor}>
+          <SectionTitle icon="rocket">
             <span id="guide-steps">3단계로 시작하기</span>
           </SectionTitle>
           <ol className="mt-5 grid gap-3">
@@ -117,7 +108,7 @@ export default function GuidePage() {
 
         {/* ── PC ── */}
         <section aria-labelledby="guide-pc">
-          <SectionTitle icon={Keyboard}>
+          <SectionTitle icon="desktop">
             <span id="guide-pc">PC에서 4분할 보기</span>
           </SectionTitle>
           <ul className="text-muted-foreground mt-5 list-disc space-y-2 pl-5 text-sm leading-relaxed">
@@ -153,7 +144,7 @@ export default function GuidePage() {
           </ul>
           <div className="bg-card ring-border mt-4 overflow-hidden rounded-2xl ring-1">
             <table className="w-full text-sm">
-              <caption className="text-muted-foreground px-5 pt-4 pb-2 text-left text-xs font-medium">
+              <caption className="text-muted-foreground px-3 pt-4 pb-2 text-left text-xs font-medium sm:px-5">
                 키보드 단축키 (입력창에 타이핑 중일 때는 동작하지 않아요)
               </caption>
               <tbody>
@@ -161,11 +152,12 @@ export default function GuidePage() {
                   <tr key={s.keys} className="border-border/60 border-t">
                     <th
                       scope="row"
-                      className="w-44 px-5 py-2.5 text-left font-mono text-xs font-medium"
+                      // 모바일에서 키 열을 좁혀 설명이 한 줄에 들어가게 한다. "Delete / Backspace"만 두 줄로 접힌다.
+                      className="w-24 px-3 py-2.5 text-left font-mono text-xs font-medium sm:w-44 sm:px-5"
                     >
                       {s.keys}
                     </th>
-                    <td className="text-muted-foreground px-5 py-2.5">
+                    <td className="text-muted-foreground px-3 py-2.5 sm:px-5">
                       {s.desc}
                     </td>
                   </tr>
@@ -177,7 +169,7 @@ export default function GuidePage() {
 
         {/* ── 모바일 ── */}
         <section aria-labelledby="guide-mobile">
-          <SectionTitle icon={Smartphone}>
+          <SectionTitle icon="mobile">
             <span id="guide-mobile">모바일에서 멀티뷰 보기</span>
           </SectionTitle>
           <p className="text-muted-foreground mt-5 text-sm leading-relaxed text-pretty">
@@ -192,7 +184,7 @@ export default function GuidePage() {
 
         {/* ── 공유 ── */}
         <section aria-labelledby="guide-share">
-          <SectionTitle icon={Link2}>
+          <SectionTitle icon="link">
             <span id="guide-share">멀티뷰 URL 공유</span>
           </SectionTitle>
           <p className="text-muted-foreground mt-5 text-sm leading-relaxed text-pretty">
@@ -216,7 +208,7 @@ export default function GuidePage() {
 
         {/* ── HD ── */}
         <section aria-labelledby="guide-hd" id="hd">
-          <SectionTitle icon={Info}>
+          <SectionTitle icon="bulb">
             <span id="guide-hd">고화질(HD) 시청이 안 될 때</span>
           </SectionTitle>
           <p className="text-muted-foreground mt-5 text-sm leading-relaxed text-pretty">
@@ -239,7 +231,7 @@ export default function GuidePage() {
 
         {/* ── FAQ ── */}
         <section aria-labelledby="guide-faq">
-          <SectionTitle icon={MessagesSquare}>
+          <SectionTitle icon="speech">
             <span id="guide-faq">자주 묻는 질문</span>
           </SectionTitle>
           <div className="mt-5">
