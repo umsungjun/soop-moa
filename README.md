@@ -96,6 +96,8 @@ https://soopmoa.vercel.app/multiview?v=아이디1|아이디2|아이디3|아이�
 
 SOOP 계정으로 로그인하면 글과 댓글, 답글을 남기고 좋아요·싫어요를 누를 수 있습니다. 글 읽기는 로그인 없이 됩니다.
 
+내 글에 댓글이 달리거나 내 댓글에 답글이 달리면 헤더의 종 아이콘에 알림이 뜹니다. 알림을 누르면 그 댓글 위치로 바로 이동합니다.
+
 ## 기술 스택
 
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · shadcn/ui · SWR · TanStack Query · iron-session · Supabase
