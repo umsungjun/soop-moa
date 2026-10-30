@@ -29,6 +29,11 @@ export const reactionSchema = z.object({
   value: z.enum(["like", "dislike"]),
 });
 
+export const markNotificationsReadSchema = z.object({
+  // 빈 배열은 받지 않는다. 전체 읽음은 ids를 생략해서 요청한다.
+  ids: z.array(z.uuid()).min(1).max(50).optional(),
+});
+
 export const listQuerySchema = z.object({
   cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(50).default(20),

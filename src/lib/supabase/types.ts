@@ -46,6 +46,21 @@ export interface PostListPage {
   nextCursor: string | null;
 }
 
+/** comment = 내 글에 달린 댓글, reply = 내 댓글에 달린 답글. */
+export type NotificationType = "comment" | "reply";
+
+/** 알림 한 건. 작성자·미리보기는 댓글 작성 시점 스냅샷이다. */
+export interface CommunityNotification {
+  id: string;
+  type: NotificationType;
+  postId: string;
+  commentId: string;
+  actor: AuthorRef;
+  preview: string;
+  createdAt: string; // ISO
+  isRead: boolean;
+}
+
 /** 쓰기 시 세션에서 파생되는 작성자 upsert 페이로드. */
 export interface ProfileUpsert {
   userId: string;
