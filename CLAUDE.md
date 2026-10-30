@@ -55,10 +55,12 @@ Feature code lives under `src/domains/{auth,community,live,multiview}`, each sel
 
 ### Multiview (the signature feature)
 
-- All client state lives in `useMultiviewState()` (`domains/multiview/hooks`). State = `panels[]` (1..`MAX_PANELS` = 4) + per-group resize `sizes` + `focusedId` + `globalMuted`.
-- **Persistence & sharing**: on mount, hydrate in priority order **URL (`?v=&o=`) → localStorage → default**; on change, persist debounced to both the URL (`history.replaceState`, 300ms) and localStorage (800ms).
-- **URL codec** (`utils/url-codec.ts`): `v` = pipe-joined bjIds (`_` marks an empty slot), `o` = per-panel options `m{0|1}c{0|1}`. This is what makes a layout shareable by a single link.
-- **Grid topology is fixed per panel count** (`components/grid/grid-layout.tsx`, distinct 1/2/3/4 layouts with custom drag-resize handles); only the drag ratios persist in `sizes`, and changing panel count resets them.
+- All client state lives in `useMultiviewState()` (`domains/multiview/hooks`). State = `panels[]` (1..`MAX_PANELS` = 4, index 0 = 메인 칸) + `layout` (배치 계열) + per-track resize `sizes` + `focusedId` + `globalMuted`.
+- **Persistence & sharing**: on mount, hydrate in priority order **URL (`?v=&o=&l=`) → localStorage → default**; on change, persist debounced to both the URL (`history.replaceState`, 300ms) and localStorage (800ms).
+- **URL codec** (`utils/url-codec.ts`): `v` = pipe-joined bjIds (`_` marks an empty slot), `o` = per-panel options `m{0|1}c{0|1}`, `l` = 배치 계열(기본 `grid`는 생략해 기존 링크와 같은 주소). This is what makes a layout shareable by a single link.
+- **배치 프리셋** (`utils/layouts.ts`): 계열 `grid`·`main-top`·`main-left`·`columns` × 패널 수(1~4)마다 트랙 분율과 셀 좌표를 선언한다. 분할선은 셀 좌표에서 자동 계산(경계를 가로지르는 셀이 없는 구간에만)하고, 그 패널 수에 정의가 없는 계열은 `grid`로 그린다. 고른 계열은 패널 수가 바뀌어도 유지된다. 새 배치는 이 파일에 프리셋 하나만 더하면 그리드·분할선·툴바 아이콘(`layout-picker.tsx`)이 모두 따라온다.
+- `sizes`는 현재 배치의 트랙 수와 길이가 같을 때만 쓰이고(`resolveTracks`), 패널 수나 배치가 바뀌면 초기화된다.
+- **DOM 순서 불변**: 그리드·모바일 스택 모두 `stableOrder()`(패널 id 순)로 렌더하고 위치는 grid 좌표·CSS `order`로만 바꾼다. iframe은 DOM에서 옮겨지는 순간 다시 로드되므로, 패널 배열 순서가 바뀌는 동작(메인으로 올리기 `swapPanels`, 단축키 M)에서 방송이 끊기지 않게 하는 장치다. `panels.map`으로 직접 렌더하도록 되돌리면 이 보장이 깨진다.
 - Each panel renders a SOOP embed iframe built by `utils/embed-url.ts`.
 
 ### UI & styling

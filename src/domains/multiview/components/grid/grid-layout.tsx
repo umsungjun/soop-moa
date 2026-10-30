@@ -2,75 +2,78 @@
 
 import { useRef } from "react";
 import { GripHorizontal, GripVertical } from "lucide-react";
-import { MIN_PANEL_SIZE } from "@/domains/multiview/constants";
-import type { LayoutSizes, Panel as PanelData } from "@/domains/multiview/types";
+import type {
+  LayoutId,
+  LayoutSizes,
+  Panel as PanelData,
+} from "@/domains/multiview/types";
+import {
+  moveBoundary,
+  resolveLayout,
+  resolveSizes,
+  stableOrder,
+  type Gutter as GutterData,
+} from "@/domains/multiview/utils/layouts";
 import { cn } from "@/lib/utils";
 
 interface GridLayoutProps {
   panels: PanelData[];
+  layout: LayoutId;
   sizes: LayoutSizes;
   renderSlot: (panel: PanelData) => React.ReactNode;
   onSizesChange: (patch: Partial<LayoutSizes>) => void;
   onResizingChange?: (resizing: boolean) => void;
 }
 
-const MIN = MIN_PANEL_SIZE / 100; // 분율 하한(각 칸 최소 15%)
+const GAP = 8; // px, 컨테이너의 gap-2와 같아야 분할선이 틈 한가운데 놓인다
 
-function clampFrac(v: number) {
-  return Math.min(1 - MIN, Math.max(MIN, v));
-}
+const prefix = (tracks: number[], i: number) =>
+  tracks.slice(0, i).reduce((a, b) => a + b, 0);
+
+// 트랙 i가 시작하는 지점. fr은 gap을 뺀 나머지 폭을 나누므로 gap을 따로 더한다.
+const trackStart = (tracks: number[], i: number) =>
+  `calc((100% - ${(tracks.length - 1) * GAP}px) * ${prefix(tracks, i)} + ${i * GAP}px)`;
+
+const trackSpan = (tracks: number[], from: number, to: number) =>
+  `calc((100% - ${(tracks.length - 1) * GAP}px) * ${prefix(tracks, to) - prefix(tracks, from)} + ${(to - from - 1) * GAP}px)`;
+
+// 경계 b의 gap 한가운데.
+const boundaryCenter = (tracks: number[], b: number) =>
+  `calc((100% - ${(tracks.length - 1) * GAP}px) * ${prefix(tracks, b)} + ${(b - 0.5) * GAP}px)`;
 
 /**
- * 멀티뷰 그리드 — 패널을 panel.id로 키잉한 평탄한 목록으로 렌더하고 위치는 CSS 그리드로만 정한다.
- * 패널을 닫아도 살아남은 셀의 DOM(iframe)이 유지되어 재생성(새로고침)되지 않는다.
- * 분할선은 절대 위치 핸들로, 드래그하면 컬럼/행 분율(fr)만 바꾼다.
+ * 멀티뷰 그리드. 배치 프리셋(utils/layouts.ts)의 셀 좌표대로 CSS 그리드에 놓는다.
+ * 패널은 stableOrder로 DOM 순서를 고정하고 위치만 바꿔서, 닫기·메인으로 올리기에도 살아남은 iframe이 다시 로드되지 않는다.
  */
 export function GridLayout({
   panels,
+  layout,
   sizes,
   renderSlot,
   onSizesChange,
   onResizingChange,
 }: GridLayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const n = panels.length;
-  const cols = sizes.cols ?? [0.5, 0.5];
-  const rows = sizes.rows ?? [0.5, 0.5];
+  const preset = resolveLayout(layout, panels.length);
+  const { cols, rows } = resolveSizes(sizes, preset);
 
-  const gridTemplateColumns = n <= 1 ? "1fr" : `${cols[0]}fr ${cols[1]}fr`;
-  const gridTemplateRows = n <= 2 ? "1fr" : `${rows[0]}fr ${rows[1]}fr`;
-
-  // 패널 인덱스 → CSS 그리드 셀 위치. 외형은 기존 1/2/3/4분할 레이아웃과 동일.
-  function cellStyle(i: number): React.CSSProperties {
-    if (n <= 1) return { gridColumn: "1 / -1", gridRow: "1 / -1" };
-    if (n === 2) return { gridColumn: String(i + 1), gridRow: "1" };
-    if (n === 3) {
-      if (i === 0) return { gridColumn: "1", gridRow: "1" }; // 좌상(1)
-      if (i === 1) return { gridColumn: "2", gridRow: "1" }; // 우상(2)
-      return { gridColumn: "1 / 3", gridRow: "2" }; // 하단 전체 폭(3)
-    }
-    // n === 4 → 0=TL 1=TR 2=BL 3=BR (1,2 / 3,4)
-    return {
-      gridColumn: i % 2 === 0 ? "1" : "2",
-      gridRow: i < 2 ? "1" : "2",
-    };
-  }
-
-  function startDrag(axis: "x" | "y", e: React.PointerEvent) {
+  function startDrag(g: GutterData, e: React.PointerEvent) {
     e.preventDefault();
     const el = containerRef.current;
     if (!el) return;
     onResizingChange?.(true);
+    const isX = g.axis === "x";
+    // 드래그 중에는 이 경계의 양옆 트랙만 바뀌므로 시작 시점 분율을 기준으로 계산해도 된다.
+    const tracks = isX ? cols : rows;
 
     const onMove = (ev: PointerEvent) => {
       const rect = el.getBoundingClientRect();
-      if (axis === "x") {
-        const frac = clampFrac((ev.clientX - rect.left) / rect.width);
-        onSizesChange({ cols: [frac, 1 - frac] });
-      } else {
-        const frac = clampFrac((ev.clientY - rect.top) / rect.height);
-        onSizesChange({ rows: [frac, 1 - frac] });
-      }
+      const free = (isX ? rect.width : rect.height) - (tracks.length - 1) * GAP;
+      const pos =
+        (isX ? ev.clientX - rect.left : ev.clientY - rect.top) -
+        (g.boundary - 0.5) * GAP;
+      const next = moveBoundary(tracks, g.boundary, pos / free);
+      onSizesChange(isX ? { cols: next } : { rows: next });
     };
     const onUp = () => {
       onResizingChange?.(false);
@@ -81,42 +84,51 @@ export function GridLayout({
     window.addEventListener("pointerup", onUp);
   }
 
-  const colLeftPct = (cols[0] / (cols[0] + cols[1])) * 100;
-  const rowTopPct = (rows[0] / (rows[0] + rows[1])) * 100;
-
   return (
     <div
       ref={containerRef}
       className="relative grid size-full gap-2"
-      style={{ gridTemplateColumns, gridTemplateRows }}
+      style={{
+        gridTemplateColumns: cols.map((f) => `${f}fr`).join(" "),
+        gridTemplateRows: rows.map((f) => `${f}fr`).join(" "),
+      }}
     >
-      {panels.map((p, i) => (
-        <div key={p.id} className="min-h-0 min-w-0" style={cellStyle(i)}>
-          {renderSlot(p)}
-        </div>
+      {stableOrder(panels).map(({ panel, index }) => {
+        const c = preset.cells[index];
+        return (
+          <div
+            key={panel.id}
+            className="min-h-0 min-w-0"
+            style={{
+              gridColumn: `${c.col + 1} / span ${c.colSpan}`,
+              gridRow: `${c.row + 1} / span ${c.rowSpan}`,
+            }}
+          >
+            {renderSlot(panel)}
+          </div>
+        );
+      })}
+
+      {preset.gutters.map((g) => (
+        <Gutter
+          key={`${g.axis}${g.boundary}-${g.from}`}
+          axis={g.axis}
+          style={
+            g.axis === "x"
+              ? {
+                  left: boundaryCenter(cols, g.boundary),
+                  top: trackStart(rows, g.from),
+                  height: trackSpan(rows, g.from, g.to),
+                }
+              : {
+                  top: boundaryCenter(rows, g.boundary),
+                  left: trackStart(cols, g.from),
+                  width: trackSpan(cols, g.from, g.to),
+                }
+          }
+          onPointerDown={(e) => startDrag(g, e)}
+        />
       ))}
-
-      {/* 세로 분할선(좌/우 컬럼 사이) — 2·3·4분할. 3분할은 상단 행(1·2)에만 적용. */}
-      {n >= 2 ? (
-        <Gutter
-          axis="x"
-          style={{
-            left: `${colLeftPct}%`,
-            top: 0,
-            bottom: n === 3 ? `${100 - rowTopPct}%` : 0,
-          }}
-          onPointerDown={(e) => startDrag("x", e)}
-        />
-      ) : null}
-
-      {/* 가로 분할선 — 3·4분할 모두 전체 폭(상단 행 / 하단 행 사이) */}
-      {n >= 3 ? (
-        <Gutter
-          axis="y"
-          style={{ top: `${rowTopPct}%`, left: 0, right: 0 }}
-          onPointerDown={(e) => startDrag("y", e)}
-        />
-      ) : null}
     </div>
   );
 }

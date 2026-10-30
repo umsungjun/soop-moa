@@ -1,18 +1,26 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LS_KEY_STATE, MAX_PANELS } from "../constants";
 import type {
+  LayoutId,
   LayoutSizes,
   MultiviewState,
-  Panel,
   PanelOptions,
 } from "../types";
-import { decodePanels, encodePanels, newPanel } from "../utils/url-codec";
+import { DEFAULT_LAYOUT, isLayoutId } from "../utils/layouts";
+import {
+  decodeLayout,
+  decodePanels,
+  encodeLayout,
+  encodePanels,
+  newPanel,
+} from "../utils/url-codec";
 
 function defaultState(): MultiviewState {
   return {
     panels: [newPanel(null)],
+    layout: DEFAULT_LAYOUT,
     sizes: {},
     focusedId: null,
     globalMuted: false,
@@ -26,7 +34,11 @@ function loadFromLocalStorage(): MultiviewState | null {
     const parsed = JSON.parse(raw) as MultiviewState;
     if (!Array.isArray(parsed.panels) || parsed.panels.length === 0)
       return null;
-    return parsed;
+    // layout 필드가 없던 이전 버전 저장값도 그대로 복원한다.
+    return {
+      ...parsed,
+      layout: isLayoutId(parsed.layout) ? parsed.layout : DEFAULT_LAYOUT,
+    };
   } catch {
     return null;
   }
@@ -42,8 +54,11 @@ export function useMultiviewState() {
     const params = new URLSearchParams(window.location.search);
     const decoded = decodePanels(params.get("v"), params.get("o"));
     if (decoded) {
+      // URL·localStorage는 브라우저에만 있어 마운트 후에 읽어야 SSR과 어긋나지 않는다.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setState({
         panels: decoded.slice(0, MAX_PANELS),
+        layout: decodeLayout(params.get("l")),
         sizes: {},
         focusedId: decoded[0]?.id ?? null,
         globalMuted: false,
@@ -63,6 +78,8 @@ export function useMultiviewState() {
       const params = new URLSearchParams();
       params.set("v", v);
       params.set("o", o);
+      const l = encodeLayout(state.layout);
+      if (l) params.set("l", l);
       window.history.replaceState(null, "", `?${params.toString()}`);
     }, 300);
 
@@ -135,7 +152,12 @@ export function useMultiviewState() {
       if (prev.panels.length >= MAX_PANELS) return prev;
       const p = newPanel(null);
       // 패널 수가 바뀌면 분할 비율 초기화.
-      return { ...prev, panels: [...prev.panels, p], sizes: {}, focusedId: p.id };
+      return {
+        ...prev,
+        panels: [...prev.panels, p],
+        sizes: {},
+        focusedId: p.id,
+      };
     });
   }, [update]);
 
@@ -197,7 +219,10 @@ export function useMultiviewState() {
 
   const setFocus = useCallback(
     (panelId: string | null) => {
-      update((prev) => ({ ...prev, focusedId: panelId }));
+      // 패널을 누를 때마다 호출되므로 같은 값이면 prev를 그대로 돌려 리렌더·저장을 건너뛴다.
+      update((prev) =>
+        prev.focusedId === panelId ? prev : { ...prev, focusedId: panelId },
+      );
     },
     [update],
   );
@@ -237,13 +262,23 @@ export function useMultiviewState() {
     [update],
   );
 
+  const setLayout = useCallback(
+    (layout: LayoutId) => {
+      // 트랙 수가 달라지므로 분율도 함께 초기화.
+      update((prev) =>
+        prev.layout === layout ? prev : { ...prev, layout, sizes: {} },
+      );
+    },
+    [update],
+  );
+
   const reset = useCallback(() => {
     update((prev) => ({ ...prev, sizes: {} }));
   }, [update]);
 
-  return {
-    state,
-    actions: {
+  // 액션 객체를 고정해 이를 의존하는 effect(단축키 등)가 렌더마다 재구독되지 않게 한다.
+  const actions = useMemo(
+    () => ({
       assignToPanel,
       addStream,
       addEmptyPanel,
@@ -255,9 +290,27 @@ export function useMultiviewState() {
       swapPanels,
       setGlobalMuted,
       setSizes,
+      setLayout,
       reset,
-    },
-  };
+    }),
+    [
+      assignToPanel,
+      addStream,
+      addEmptyPanel,
+      removePanel,
+      setOptions,
+      toggleMute,
+      toggleChat,
+      setFocus,
+      swapPanels,
+      setGlobalMuted,
+      setSizes,
+      setLayout,
+      reset,
+    ],
+  );
+
+  return { state, actions };
 }
 
 export type MultiviewActions = ReturnType<typeof useMultiviewState>["actions"];

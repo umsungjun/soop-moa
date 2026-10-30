@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { MAX_PANELS } from "@/domains/multiview/constants";
 import { useMultiviewState } from "@/domains/multiview/hooks/use-multiview-state";
 import type { Panel as PanelData } from "@/domains/multiview/types";
+import { getPresets, resolveLayout } from "@/domains/multiview/utils/layouts";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { AddStreamDialog } from "./add-stream/add-stream-dialog";
@@ -90,11 +91,20 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
         return;
       }
       const s = state!;
+      const key = e.key.toLowerCase();
       if (e.key >= "1" && e.key <= "4") {
         const idx = Number(e.key) - 1;
         if (s.panels[idx]) actions.setFocus(s.panels[idx].id);
-      } else if (e.key === "c" || e.key === "C") {
+      } else if (key === "c") {
         if (s.focusedId) actions.toggleChat(s.focusedId);
+      } else if (key === "l" && !isMobile) {
+        // 현재 패널 수에서 고를 수 있는 배치를 차례로 돈다.
+        const presets = getPresets(s.panels.length);
+        const cur = presets.indexOf(resolveLayout(s.layout, s.panels.length));
+        actions.setLayout(presets[(cur + 1) % presets.length].id);
+      } else if (key === "m") {
+        if (s.focusedId && s.panels[0].id !== s.focusedId)
+          actions.swapPanels(s.focusedId, s.panels[0].id);
       } else if (e.key === "+" || e.key === "=") {
         openAddNew();
       } else if (e.key === "Delete" || e.key === "Backspace") {
@@ -103,7 +113,27 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [state, actions, dialogOpen, openAddNew]);
+  }, [state, actions, dialogOpen, openAddNew, isMobile]);
+
+  // 크로스오리진 iframe 안을 누르면 부모에 mousedown이 오지 않는다. 창이 blur될 때 포커스를 가져간 iframe의 패널로 포커스를 옮긴다.
+  useEffect(() => {
+    function onBlur() {
+      // blur 시점에는 activeElement가 아직 갱신 전일 수 있어 한 틱 미룬다.
+      setTimeout(() => {
+        const el = document.activeElement;
+        if (!(el instanceof HTMLIFrameElement)) return;
+        const id = el.closest<HTMLElement>("[data-panel-id]")?.dataset.panelId;
+        if (id) actions.setFocus(id);
+      }, 0);
+    }
+    window.addEventListener("blur", onBlur);
+    return () => window.removeEventListener("blur", onBlur);
+  }, [actions]);
+
+  const preset = state
+    ? resolveLayout(state.layout, state.panels.length)
+    : null;
+  const mainId = state?.panels[0]?.id;
 
   const renderSlot = useCallback(
     (panel: PanelData) => (
@@ -116,9 +146,15 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
         onRequestAdd={() => openAddForPanel(panel.id)}
         onRemove={() => actions.removePanel(panel.id)}
         onToggleChat={() => actions.toggleChat(panel.id)}
+        // 모바일 세로 스택은 메인 칸이 없으므로 데스크톱의 메인 배치에서만 노출한다.
+        onPromote={
+          !isMobile && preset?.hasMain && mainId && panel.id !== mainId
+            ? () => actions.swapPanels(panel.id, mainId)
+            : undefined
+        }
       />
     ),
-    [state, actions, openAddForPanel, isMobile],
+    [state, actions, openAddForPanel, isMobile, preset, mainId],
   );
 
   if (!state) {
@@ -136,8 +172,10 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
       <MultiviewToolbar
         panelCount={state.panels.length}
         filledCount={filledCount}
+        layout={state.layout}
         sidebarOpen={sidebarOpen}
         onToggleSidebar={() => setSidebarOpen((o) => !o)}
+        onLayoutChange={actions.setLayout}
         onResetLayout={actions.reset}
         onAddPanel={openAddNew}
       />
@@ -169,6 +207,7 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
           ) : (
             <GridLayout
               panels={state.panels}
+              layout={state.layout}
               sizes={state.sizes}
               renderSlot={renderSlot}
               onSizesChange={actions.setSizes}

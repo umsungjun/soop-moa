@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   ChevronDown,
   ChevronUp,
+  Maximize2,
   MessageSquare,
   MessageSquareOff,
   RefreshCw,
@@ -17,6 +18,8 @@ interface PanelControlBarProps {
   onToggleChat: () => void;
   onReload: () => void;
   onRemove: () => void;
+  /** 메인 칸으로 올리기. 메인이 있는 배치의 메인 외 패널에만 넘어온다. */
+  onPromote?: () => void;
 }
 
 function CtrlButton({
@@ -59,6 +62,7 @@ export function PanelControlBar({
   onToggleChat,
   onReload,
   onRemove,
+  onPromote,
 }: PanelControlBarProps) {
   // 컨트롤 접기 상태 — SOOP 플레이어를 가리지 않도록 작은 핸들로 접을 수 있다.
   const [collapsed, setCollapsed] = useState(false);
@@ -81,6 +85,11 @@ export function PanelControlBar({
         </CtrlButton>
       ) : (
         <>
+          {onPromote ? (
+            <CtrlButton label="메인 화면으로" onClick={onPromote}>
+              <Maximize2 />
+            </CtrlButton>
+          ) : null}
           <CtrlButton
             label={options.chat ? "채팅 숨기기" : "채팅 보기"}
             onClick={onToggleChat}

@@ -14,6 +14,7 @@ interface PanelSlotProps {
   onRequestAdd: () => void;
   onRemove: () => void;
   onToggleChat: () => void;
+  onPromote?: () => void;
 }
 
 export function PanelSlot({
@@ -24,12 +25,14 @@ export function PanelSlot({
   onRequestAdd,
   onRemove,
   onToggleChat,
+  onPromote,
 }: PanelSlotProps) {
   const [reloadNonce, setReloadNonce] = useState(0);
 
   return (
     // 포커스는 키보드 단축키(C·Delete)의 대상 패널을 정하는 데만 쓰고, 플레이어 위에 파란 테두리를 그리지 않는다. 상태는 data-focused로만 남긴다.
     <div
+      data-panel-id={panel.id}
       data-focused={focused}
       onMouseDown={onFocus}
       className="group/panel ring-border relative size-full overflow-hidden rounded-lg ring-1"
@@ -41,6 +44,7 @@ export function PanelSlot({
             onToggleChat={onToggleChat}
             onReload={() => setReloadNonce((n) => n + 1)}
             onRemove={onRemove}
+            onPromote={onPromote}
           />
           <PanelPlayer
             bjId={panel.bjId}
