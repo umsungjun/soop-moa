@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Headset,
   Link2,
   PanelLeftClose,
   PanelLeftOpen,
@@ -23,6 +24,8 @@ interface MultiviewToolbarProps {
   onLayoutChange: (layout: LayoutId) => void;
   onResetLayout: () => void;
   onAddPanel: () => void;
+  /** 채팅 문의 열기. 채널톡 키가 없으면 undefined라 버튼을 숨긴다. */
+  onContact?: () => void;
 }
 
 export function MultiviewToolbar({
@@ -34,6 +37,7 @@ export function MultiviewToolbar({
   onLayoutChange,
   onResetLayout,
   onAddPanel,
+  onContact,
 }: MultiviewToolbarProps) {
   async function handleShare() {
     try {
@@ -89,6 +93,18 @@ export function MultiviewToolbar({
       </Button>
 
       <div className="ml-auto flex items-center gap-1.5">
+        {onContact ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1.5"
+            onClick={onContact}
+            aria-label="문의하기"
+          >
+            <Headset />
+            <span className="hidden lg:inline">문의</span>
+          </Button>
+        ) : null}
         <Button
           variant="ghost"
           size="sm"

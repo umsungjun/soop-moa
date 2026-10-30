@@ -2,6 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import {
+  CHANNEL_TALK_ENABLED,
+  openChannelTalk,
+} from "@/components/support/channel-talk";
 import { MAX_PANELS } from "@/domains/multiview/constants";
 import { useMultiviewState } from "@/domains/multiview/hooks/use-multiview-state";
 import type { Panel as PanelData } from "@/domains/multiview/types";
@@ -181,6 +185,7 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
         onLayoutChange={actions.setLayout}
         onResetLayout={actions.reset}
         onAddPanel={openAddNew}
+        onContact={CHANNEL_TALK_ENABLED ? openChannelTalk : undefined}
       />
 
       <HdAccessNotice />

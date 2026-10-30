@@ -5,6 +5,7 @@ import { Clarity } from "@/components/analytics/clarity";
 import { DevAnnotations } from "@/components/dev/dev-annotations";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import ChannelTalk from "@/components/support/channel-talk";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
 import { JsonLd } from "@/lib/seo/json-ld";
@@ -151,6 +152,8 @@ export default function RootLayout({
             {children}
             <Toaster richColors position="top-center" />
           </QueryProvider>
+          {/* 테마를 메신저 색에 맞추려고 ThemeProvider 안에 둔다. */}
+          <ChannelTalk />
         </ThemeProvider>
         {/* 개발 환경에서만 렌더 */}
         {process.env.NODE_ENV !== "production" && <DevAnnotations />}
