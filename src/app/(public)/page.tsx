@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ArrowRight, Radio, Sparkles } from "lucide-react";
+import AdSlot from "@/components/ads/ad-slot";
 import { Button } from "@/components/ui/button";
 import Icon3D, { type Icon3DName } from "@/components/ui/icon-3d";
 import { LiveCard } from "@/domains/live/components/live-card";
@@ -163,6 +164,9 @@ export default async function LandingPage() {
             <p className="text-sm">지금은 표시할 라이브 방송이 없어요.</p>
           </div>
         )}
+
+        {/* 인기 라이브 아래, 화면 밖에서 채워져 레이아웃 이동(CLS)이 보이지 않는 자리 */}
+        <AdSlot className="mt-12" />
       </section>
     </div>
   );

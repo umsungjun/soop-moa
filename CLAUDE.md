@@ -36,7 +36,7 @@ Feature code lives under `src/domains/{auth,community,live,multiview}`, each sel
 
 - `src/lib/soop/client.ts` is the **only** place that talks to the SOOP API and is `import "server-only"`. It wraps OAuth (authorization_code + refresh), broadcast list, category list, and authenticated station info, normalizing raw SOOP fields (`SoopBroadcast` → `LiveBroadcast`). UI never calls SOOP directly — it goes through `src/app/api/soop/*` route handlers.
 - `src/lib/env.ts` validates env with zod. `getServerEnv()` **throws if called on the client** — a guard against leaking `SOOP_CLIENT_SECRET` / `IRON_SESSION_PASSWORD` into the bundle. `NEXT_PUBLIC_*` vars are referenced statically so Next inlines them.
-- Required env: `SOOP_CLIENT_SECRET`, `IRON_SESSION_PASSWORD` (≥32 chars), `NEXT_PUBLIC_SOOP_CLIENT_ID`, `NEXT_PUBLIC_SOOP_REDIRECT_URI`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (server-only). Optional: `NEXT_PUBLIC_SUPABASE_ANON_KEY` (MVP 미사용), `CRON_SECRET` (heartbeat), `NEXT_PUBLIC_CHANNEL_PLUGIN_KEY` (채널톡). 선택 키가 비어 있으면 해당 기능은 아무것도 렌더·로드하지 않는다.
+- Required env: `SOOP_CLIENT_SECRET`, `IRON_SESSION_PASSWORD` (≥32 chars), `NEXT_PUBLIC_SOOP_CLIENT_ID`, `NEXT_PUBLIC_SOOP_REDIRECT_URI`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (server-only). Optional: `NEXT_PUBLIC_SUPABASE_ANON_KEY` (MVP 미사용), `CRON_SECRET` (heartbeat), `NEXT_PUBLIC_ADSENSE_CLIENT_ID` · `NEXT_PUBLIC_ADSENSE_SLOT_ID` (광고), `NEXT_PUBLIC_CHANNEL_PLUGIN_KEY` (채널톡). 선택 키가 비어 있으면 해당 기능은 아무것도 렌더·로드하지 않는다.
 
 ### Auth (iron-session, OAuth)
 
@@ -73,10 +73,11 @@ Feature code lives under `src/domains/{auth,community,live,multiview}`, each sel
 
 ### Security headers
 
-`next.config.ts` sets a strict CSP that only allows SOOP domains (`*.sooplive.com`, `*.sooplive.co.kr`, `*.afreecatv.com`) for `frame-src` / `img-src` / `media-src`, mirrored by `next/image` `remotePatterns`. New external origins must be whitelisted here or embeds/images break. Clarity·채널톡(`CHANNEL_SRC`) 출처도 여기 있다.
+`next.config.ts` sets a strict CSP that only allows SOOP domains (`*.sooplive.com`, `*.sooplive.co.kr`, `*.afreecatv.com`) for `frame-src` / `img-src` / `media-src`, mirrored by `next/image` `remotePatterns`. New external origins must be whitelisted here or embeds/images break. Clarity·AdSense(`ADSENSE_SRC`)·채널톡(`CHANNEL_SRC`) 출처도 여기 있다. Google은 AdSense에 호스트 허용 목록 CSP를 공식 지원하지 않으므로, 광고가 비면 콘솔의 CSP 위반 출처를 확인해 더한다.
 
-### Support
+### Ads & support
 
+- **Google AdSense** (`src/components/ads/`): `NEXT_PUBLIC_ADSENSE_CLIENT_ID`가 있고 운영 빌드일 때만 켜진다. 스크립트(`adsense-script.tsx`)는 `(public)` 레이아웃에만 싣고 `/multiview`에는 싣지 않는다(자동 광고의 앵커·전면 광고가 플레이어를 가린다). 수동 광고 칸 `AdSlot`은 랜딩 하단·가이드 FAQ 아래·글 상세 본문 아래 세 곳이며, 채워지지 않으면(unfilled) 라벨까지 숨긴다. 루트 메타데이터에 `google-adsense-account`, `src/app/ads.txt/route.ts`가 `/ads.txt`를 낸다.
 - **채널톡** (`src/components/support/channel-talk.tsx`, `@channel.io/channel-web-sdk-loader`): 루트 레이아웃에 한 번 마운트. 콘텐츠 페이지는 우하단 런처를 띄우고, `/multiview`는 런처가 오른쪽 아래 패널의 SOOP 채팅 입력창을 가리므로 숨긴 채 SDK도 로드하지 않다가 툴바의 "문의" 버튼(`openChannelTalk`)을 누를 때 부팅한다. 헤더 테마 토글을 메신저 색에 맞춘다.
 
 ### Brand assets

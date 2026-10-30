@@ -6,6 +6,9 @@ const SOOP_IMG_SRC =
   "https://*.sooplive.com https://*.sooplive.co.kr https://*.afreecatv.com";
 // Microsoft Clarity(세션 분석)가 태그 스크립트 로드·비콘 전송에 쓰는 출처.
 const CLARITY_SRC = "https://*.clarity.ms";
+// Google AdSense. Google은 호스트 허용 목록이 아니라 nonce 기반 strict CSP만 공식 지원한다. 광고가 비면 콘솔의 CSP 위반 출처를 여기에 더한다.
+const ADSENSE_SRC =
+  "https://*.googlesyndication.com https://*.doubleclick.net https://*.google.com https://*.gstatic.com https://*.googletagservices.com https://*.adtrafficquality.google";
 // 채널톡. developers.channel.io/docs/content-security-policy 기준이고, 명시한 지시어(font·media·frame)는 default-src를 상속하지 않아 따로 넣는다.
 const CHANNEL_SRC = "https://*.channel.io https://*.channel.app";
 const CHANNEL_CONNECT_SRC = `${CHANNEL_SRC} wss://*.channel.io wss://*.front-ws.channel.io https://*.sentry.io`;
@@ -14,13 +17,13 @@ const CHANNEL_CONNECT_SRC = `${CHANNEL_SRC} wss://*.channel.io wss://*.front-ws.
 // Next.js inline runtime. Harden later with a nonce-based CSP if needed.
 const csp = [
   `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${CLARITY_SRC} ${CHANNEL_SRC} https://*.sentry-cdn.com`,
+  `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${CLARITY_SRC} ${ADSENSE_SRC} ${CHANNEL_SRC} https://*.sentry-cdn.com`,
   `style-src 'self' 'unsafe-inline'`,
-  `img-src 'self' data: blob: ${SOOP_IMG_SRC} ${CLARITY_SRC} ${CHANNEL_SRC}`,
+  `img-src 'self' data: blob: ${SOOP_IMG_SRC} ${CLARITY_SRC} ${ADSENSE_SRC} ${CHANNEL_SRC}`,
   `media-src 'self' blob: ${SOOP_FRAME_SRC} ${CHANNEL_SRC}`,
   `font-src 'self' data: ${CHANNEL_SRC}`,
-  `frame-src 'self' ${SOOP_FRAME_SRC} ${CHANNEL_SRC}`,
-  `connect-src 'self' https://*.sooplive.com https://*.sooplive.co.kr ${CLARITY_SRC} https://c.bing.com ${CHANNEL_CONNECT_SRC}`,
+  `frame-src 'self' ${SOOP_FRAME_SRC} ${ADSENSE_SRC} ${CHANNEL_SRC}`,
+  `connect-src 'self' https://*.sooplive.com https://*.sooplive.co.kr ${CLARITY_SRC} https://c.bing.com ${ADSENSE_SRC} ${CHANNEL_CONNECT_SRC}`,
   `object-src 'none'`,
   `base-uri 'self'`,
   `frame-ancestors 'self'`,

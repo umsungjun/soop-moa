@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
+import AdSlot from "@/components/ads/ad-slot";
 import { siteConfig } from "@/config/site";
 import AuthorBadge from "@/domains/community/components/author-badge";
 import CommentSection from "@/domains/community/components/comment-section";
@@ -165,6 +166,8 @@ export default async function PostDetailPage({ params }: PageProps) {
           </div>
         </article>
       )}
+
+      <AdSlot className="mt-8" />
 
       <CommentSection postId={post.id} />
     </div>

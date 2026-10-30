@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ADSENSE_CLIENT_ID } from "@/components/ads/config";
 import { Clarity } from "@/components/analytics/clarity";
 import { DevAnnotations } from "@/components/dev/dev-annotations";
 import { QueryProvider } from "@/components/providers/query-provider";
@@ -82,6 +83,10 @@ export const metadata: Metadata = {
       ].filter(Boolean),
     },
   },
+  // AdSense 사이트 소유 확인. 광고 스크립트를 싣지 않는 /multiview에서도 확인되도록 루트에 둔다.
+  other: ADSENSE_CLIENT_ID
+    ? { "google-adsense-account": ADSENSE_CLIENT_ID }
+    : undefined,
 };
 
 export const viewport: Viewport = {

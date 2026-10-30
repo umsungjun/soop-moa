@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
+import AdSlot from "@/components/ads/ad-slot";
 import { Button } from "@/components/ui/button";
 import Icon3D, { type Icon3DName } from "@/components/ui/icon-3d";
 import { siteConfig } from "@/config/site";
@@ -238,6 +239,8 @@ export default function GuidePage() {
             <FaqList items={GUIDE_FAQ} />
           </div>
         </section>
+
+        <AdSlot />
 
         {/* ── CTA ── */}
         <section className="bg-card ring-border flex flex-col items-center gap-4 rounded-2xl p-8 text-center ring-1">
