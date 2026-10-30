@@ -22,7 +22,7 @@ npx tsc --noEmit      # 타입 체크 (별도 test 러너 없음)
 ```
 
 - Package manager is **pnpm** (`pnpm-lock.yaml`). No test runner is configured — use `tsc --noEmit` + `pnpm lint` to validate.
-- Node.js는 `package.json` `engines.node`의 **24.x**로 고정한다. Vercel은 이 값을 프로젝트 설정보다 우선해 빌드·함수를 24.x 최신 패치로 돌린다. 로컬도 Node 보안 릴리스가 나오면 같은 24.x 최신 패치로 올린다.
+- Node.js는 `package.json`의 `engines.node`를 **24.x**로 고정한다. Vercel은 이 값을 프로젝트 설정보다 우선해 빌드·함수를 24.x 최신 패치로 돌린다. 로컬도 Node 보안 릴리스가 나오면 같은 24.x 최신 패치로 올린다.
 - Path alias: `@/*` → `src/*`.
 
 ## Architecture
