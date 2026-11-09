@@ -5,6 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import AuthorBadge from "@/domains/community/components/author-badge";
 import CommentSection from "@/domains/community/components/comment-section";
+import LinkifiedText from "@/domains/community/components/linkified-text";
 import PostActions from "@/domains/community/components/post-actions";
 import ReactionButtons from "@/domains/community/components/reaction-buttons";
 import type { CommunityPost } from "@/domains/community/types";
@@ -153,7 +154,7 @@ export default async function PostDetailPage({ params }: PageProps) {
             className="mt-3"
           />
           <div className="border-border/60 mt-5 border-t pt-5 text-[0.95rem] leading-relaxed break-words whitespace-pre-wrap">
-            {post.body}
+            <LinkifiedText text={post.body} />
           </div>
           <div className="mt-7 flex justify-center">
             <ReactionButtons

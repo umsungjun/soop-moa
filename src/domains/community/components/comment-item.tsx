@@ -8,6 +8,7 @@ import type { CommunityComment } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 import AuthorBadge from "./author-badge";
 import CommentForm from "./comment-form";
+import LinkifiedText from "./linkified-text";
 
 interface CommentItemProps {
   comment: CommunityComment;
@@ -69,7 +70,7 @@ export default function CommentItem({
               ) : null}
             </div>
             <p className="mt-1.5 text-sm break-words whitespace-pre-wrap">
-              {comment.body}
+              <LinkifiedText text={comment.body} />
             </p>
             {showReplyButton ? (
               <Button
