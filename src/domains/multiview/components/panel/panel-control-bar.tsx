@@ -7,6 +7,7 @@ import {
   Maximize2,
   MessageSquare,
   MessageSquareOff,
+  MessageSquareShare,
   RefreshCw,
   X,
 } from "lucide-react";
@@ -20,6 +21,36 @@ interface PanelControlBarProps {
   onRemove: () => void;
   /** 메인 칸으로 올리기. 메인이 있는 배치의 메인 외 패널에만 넘어온다. */
   onPromote?: () => void;
+  /** 모바일 임베드는 채팅이 없어 토글 대신 이 SOOP 방송 페이지로 연결한다. */
+  chatUrl?: string;
+}
+
+// 버튼을 키워 터치/클릭하기 쉽게 한다(size-9 + svg size-5).
+const CTRL_CLASS =
+  "flex size-9 items-center justify-center rounded-md text-white/90 transition-colors hover:bg-white/20 [&_svg]:size-5";
+
+function CtrlLink({
+  label,
+  href,
+  children,
+}: {
+  label: string;
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer noopener"
+      aria-label={label}
+      title={label}
+      onClick={(e) => e.stopPropagation()}
+      className={CTRL_CLASS}
+    >
+      {children}
+    </a>
+  );
 }
 
 function CtrlButton({
@@ -45,11 +76,9 @@ function CtrlButton({
         onClick();
       }}
       className={cn(
-        // 버튼을 키워 터치/클릭하기 쉽게 한다(size-9 + svg size-5).
-        "flex size-9 items-center justify-center rounded-md text-white/90 transition-colors hover:bg-white/20",
+        CTRL_CLASS,
         active && "text-primary",
         danger && "hover:bg-destructive/80 hover:text-white",
-        "[&_svg]:size-5",
       )}
     >
       {children}
@@ -63,6 +92,7 @@ export function PanelControlBar({
   onReload,
   onRemove,
   onPromote,
+  chatUrl,
 }: PanelControlBarProps) {
   // 컨트롤 접기 상태 — SOOP 플레이어를 가리지 않도록 작은 핸들로 접을 수 있다.
   const [collapsed, setCollapsed] = useState(false);
@@ -90,13 +120,19 @@ export function PanelControlBar({
               <Maximize2 />
             </CtrlButton>
           ) : null}
-          <CtrlButton
-            label={options.chat ? "채팅 숨기기" : "채팅 보기"}
-            onClick={onToggleChat}
-            active={options.chat}
-          >
-            {options.chat ? <MessageSquare /> : <MessageSquareOff />}
-          </CtrlButton>
+          {chatUrl ? (
+            <CtrlLink label="SOOP에서 채팅하기" href={chatUrl}>
+              <MessageSquareShare />
+            </CtrlLink>
+          ) : (
+            <CtrlButton
+              label={options.chat ? "채팅 숨기기" : "채팅 보기"}
+              onClick={onToggleChat}
+              active={options.chat}
+            >
+              {options.chat ? <MessageSquare /> : <MessageSquareOff />}
+            </CtrlButton>
+          )}
           <CtrlButton label="새로고침" onClick={onReload}>
             <RefreshCw />
           </CtrlButton>

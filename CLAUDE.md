@@ -66,6 +66,7 @@ Feature code lives under `src/domains/{auth,community,live,multiview}`, each sel
 - `sizes`는 현재 배치의 트랙 수와 길이가 같을 때만 쓰이고(`resolveTracks`), 패널 수나 배치가 바뀌면 초기화된다.
 - **DOM 순서 불변**: 그리드·모바일 스택 모두 `stableOrder()`(패널 id 순)로 렌더하고 위치는 grid 좌표·CSS `order`로만 바꾼다. iframe은 DOM에서 옮겨지는 순간 다시 로드되므로, 패널 배열 순서가 바뀌는 동작(메인으로 올리기 `swapPanels`, 단축키 M)에서 방송이 끊기지 않게 하는 장치다. `panels.map`으로 직접 렌더하도록 되돌리면 이 보장이 깨진다.
 - Each panel renders a SOOP embed iframe built by `utils/embed-url.ts`.
+- **채팅은 iframe 안의 상태**: SOOP 채팅창의 X로 닫아도 부모에 알리지 않아(`postMessage`는 `showChatNotice`뿐) 패널의 채팅 옵션과 어긋날 수 있다. 끌 때 토스트로 "한 번 더 누르면 열린다"를 안내한다. 또 SOOP는 UA로 모바일 임베드를 고르는데 모바일 임베드엔 채팅이 없어 `showChat`이 무시된다. 모바일 UA(`isSoopMobileUA`)에선 채팅 토글 대신 SOOP 방송 페이지 링크를 보여 준다. 폭 기준 `isMobile`(767px)과 판별 기준이 다르다.
 
 ### UI & styling
 

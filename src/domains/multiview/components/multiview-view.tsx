@@ -8,6 +8,7 @@ import {
 } from "@/components/support/channel-talk";
 import { MAX_PANELS } from "@/domains/multiview/constants";
 import { useMultiviewState } from "@/domains/multiview/hooks/use-multiview-state";
+import { useSoopMobileEmbed } from "@/domains/multiview/hooks/use-soop-mobile-embed";
 import type { Panel as PanelData } from "@/domains/multiview/types";
 import { getPresets, resolveLayout } from "@/domains/multiview/utils/layouts";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -28,6 +29,7 @@ interface MultiviewViewProps {
 export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
   const { state, actions } = useMultiviewState();
   const isMobile = useMediaQuery("(max-width: 767px)");
+  const soopMobile = useSoopMobileEmbed();
   const [isResizing, setIsResizing] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [targetPanelId, setTargetPanelId] = useState<string | null>(null);
@@ -84,6 +86,23 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
     [actions, state],
   );
 
+  // SOOP 채팅창의 X로 닫은 상태는 크로스오리진 iframe 밖에서 알 수 없어 버튼이 켜짐으로 남는다. 이때 누르면 꺼지므로, 끌 때마다 다시 켜는 법을 알린다.
+  const toggleChat = useCallback(
+    (panelId: string) => {
+      // 모바일 임베드는 채팅이 없어 토글해도 iframe만 다시 불러온다. 단축키 C도 막는다.
+      if (soopMobile) return;
+      if (state?.panels.find((p) => p.id === panelId)?.options.chat) {
+        toast.info("채팅을 숨겼어요", {
+          id: "chat-hidden",
+          description:
+            "SOOP 채팅창의 X로 닫았었다면 한 번 더 누르면 다시 열려요.",
+        });
+      }
+      actions.toggleChat(panelId);
+    },
+    [actions, state, soopMobile],
+  );
+
   // ── Keyboard shortcuts ──
   useEffect(() => {
     if (!state) return;
@@ -103,7 +122,7 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
         const idx = Number(e.key) - 1;
         if (s.panels[idx]) actions.setFocus(s.panels[idx].id);
       } else if (key === "c") {
-        if (s.focusedId) actions.toggleChat(s.focusedId);
+        if (s.focusedId) toggleChat(s.focusedId);
       } else if (key === "l" && !isMobile) {
         // 현재 패널 수에서 고를 수 있는 배치를 차례로 돈다.
         const presets = getPresets(s.panels.length);
@@ -120,7 +139,7 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [state, actions, dialogOpen, openAddNew, isMobile]);
+  }, [state, actions, dialogOpen, openAddNew, isMobile, toggleChat]);
 
   // 크로스오리진 iframe 안을 누르면 부모에 mousedown이 오지 않는다. 창이 blur될 때 포커스를 가져간 iframe의 패널로 포커스를 옮긴다.
   useEffect(() => {
@@ -152,7 +171,7 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
         onFocus={() => actions.setFocus(panel.id)}
         onRequestAdd={() => openAddForPanel(panel.id)}
         onRemove={() => actions.removePanel(panel.id)}
-        onToggleChat={() => actions.toggleChat(panel.id)}
+        onToggleChat={() => toggleChat(panel.id)}
         // 모바일 세로 스택은 메인 칸이 없으므로 데스크톱의 메인 배치에서만 노출한다.
         onPromote={
           !isMobile && preset?.hasMain && mainId && panel.id !== mainId
@@ -161,7 +180,7 @@ export function MultiviewView({ renderLiveList }: MultiviewViewProps) {
         }
       />
     ),
-    [state, actions, openAddForPanel, isMobile, preset, mainId],
+    [state, actions, openAddForPanel, isMobile, preset, mainId, toggleChat],
   );
 
   if (!state) {

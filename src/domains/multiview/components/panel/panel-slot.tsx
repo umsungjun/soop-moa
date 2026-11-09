@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useSoopMobileEmbed } from "@/domains/multiview/hooks/use-soop-mobile-embed";
 import type { Panel } from "@/domains/multiview/types";
+import { buildWatchUrl } from "@/domains/multiview/utils/embed-url";
 import { PanelControlBar } from "./panel-control-bar";
 import { PanelEmptyState } from "./panel-empty-state";
 import { PanelPlayer } from "./panel-player";
@@ -28,6 +30,7 @@ export function PanelSlot({
   onPromote,
 }: PanelSlotProps) {
   const [reloadNonce, setReloadNonce] = useState(0);
+  const soopMobile = useSoopMobileEmbed();
 
   return (
     // 포커스는 키보드 단축키(C·Delete)의 대상 패널을 정하는 데만 쓰고, 플레이어 위에 파란 테두리를 그리지 않는다. 상태는 data-focused로만 남긴다.
@@ -45,6 +48,7 @@ export function PanelSlot({
             onReload={() => setReloadNonce((n) => n + 1)}
             onRemove={onRemove}
             onPromote={onPromote}
+            chatUrl={soopMobile ? buildWatchUrl(panel.bjId) : undefined}
           />
           <PanelPlayer
             bjId={panel.bjId}
