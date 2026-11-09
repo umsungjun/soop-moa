@@ -4,7 +4,8 @@ import { SquarePen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import PostList from "@/domains/community/components/post-list";
-import { listPosts } from "@/lib/supabase/queries";
+import { PINNED_POST_IDS } from "@/domains/community/utils/pinned";
+import { listPosts, listPostsByIds } from "@/lib/supabase/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,10 @@ export const metadata: Metadata = {
 
 export default async function CommunityPage() {
   // 첫 페이지는 서버에서 미리 받아 SEO + 초기 렌더 깜빡임 제거.
-  const initialFirstPage = await listPosts({ limit: 20 });
+  const [initialFirstPage, pinned] = await Promise.all([
+    listPosts({ limit: 20 }),
+    listPostsByIds(PINNED_POST_IDS),
+  ]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
@@ -47,7 +51,7 @@ export default async function CommunityPage() {
           글쓰기
         </Button>
       </div>
-      <PostList initialFirstPage={initialFirstPage} />
+      <PostList initialFirstPage={initialFirstPage} pinned={pinned} />
     </div>
   );
 }
