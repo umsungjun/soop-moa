@@ -1,18 +1,30 @@
-import { MessageSquare, ThumbsUp } from "lucide-react";
+import { MessageSquare, Pin, ThumbsUp } from "lucide-react";
 import type { CommunityPostSummary } from "@/lib/supabase/types";
+import { cn } from "@/lib/utils";
 import AuthorBadge from "./author-badge";
 
 interface PostCardProps {
   post: CommunityPostSummary;
+  /** 운영자 고정 글. 제목 위에 "고정" 표시를 붙인다. */
+  pinned?: boolean;
 }
 
 /** 목록의 글 한 줄 — 카드 전체가 상세로 향하는 링크. */
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({ post, pinned }: PostCardProps) {
   return (
     <a
       href={`/community/${post.id}`}
-      className="group/card ring-foreground/10 hover:ring-primary/30 focus-visible:ring-ring/50 block rounded-2xl bg-card p-5 shadow-sm ring-1 transition-all outline-none hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-3"
+      className={cn(
+        "group/card ring-foreground/10 hover:ring-primary/30 focus-visible:ring-ring/50 block rounded-2xl bg-card p-5 shadow-sm ring-1 transition-all outline-none hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-3",
+        pinned && "ring-primary/30",
+      )}
     >
+      {pinned ? (
+        <span className="text-primary mb-1.5 flex items-center gap-1 text-xs font-semibold">
+          <Pin className="size-3.5" />
+          고정
+        </span>
+      ) : null}
       <h2 className="group-hover/card:text-primary line-clamp-2 text-[0.95rem] font-semibold tracking-tight transition-colors">
         {post.title}
       </h2>

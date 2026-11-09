@@ -155,6 +155,31 @@ export const listPosts = async (opts: {
   };
 };
 
+// uuid 컬럼에 형식이 틀린 값을 넘기면 쿼리 전체가 실패해 목록 페이지가 깨지므로 미리 거른다.
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** 고정 글처럼 id를 아는 글을 넘긴 순서대로 가져온다. 삭제된 글은 뺀다. */
+export const listPostsByIds = async (
+  ids: readonly string[],
+): Promise<CommunityPostSummary[]> => {
+  const valid = ids.filter((id) => UUID_RE.test(id));
+  if (valid.length === 0) return [];
+  const { data, error } = await getSupabaseAdmin()
+    .from("posts")
+    .select(POST_SUMMARY_COLUMNS)
+    .in("id", valid)
+    .is("deleted_at", null);
+  if (error) throw mapPgError(error);
+  const byId = new Map(
+    ((data ?? []) as RawPostSummaryRow[]).map((r) => [
+      r.id,
+      normalizePostSummary(r),
+    ]),
+  );
+  return valid.flatMap((id) => byId.get(id) ?? []);
+};
+
 /** 사이트맵용 — 삭제되지 않은 글의 id·수정 시각. 최신순, 사이트맵 URL 한도(5만) 여유로 상한 5000. */
 export const listPostsForSitemap = async (): Promise<
   { id: string; updatedAt: Date }[]
