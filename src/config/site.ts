@@ -38,6 +38,7 @@ export const siteConfig = {
   links: {
     soop: "https://www.sooplive.co.kr",
     github: "https://github.com/umsungjun",
+    maker: "https://umsungjun.com",
     email: "umseongjun@naver.com",
   },
 } as const;

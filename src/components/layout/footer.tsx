@@ -1,4 +1,4 @@
-import { BookOpen, Mail } from "lucide-react";
+import { BookOpen, Mail, User } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 // lucide v1은 브랜드 아이콘을 제공하지 않아 GitHub 마크는 인라인 SVG로 둔다.
@@ -37,6 +37,16 @@ export function Footer() {
           >
             <Mail className="size-3.5" />
             문의
+          </a>
+          {/* noreferrer 를 빼야 umsungjun.com 유입 경로에 이 사이트가 잡힌다 */}
+          <a
+            href={siteConfig.links.maker}
+            target="_blank"
+            rel="noopener"
+            className="hover:text-foreground inline-flex items-center gap-1.5 underline-offset-2 hover:underline"
+          >
+            <User className="size-3.5" />
+            만든 사람
           </a>
           <a
             href={siteConfig.links.github}
